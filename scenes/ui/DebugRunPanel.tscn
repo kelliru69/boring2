@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://debug_run_panel_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/ui/DebugRunPanel.gd" id="1_debug"]
+
+[node name="DebugRunPanel" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_debug")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 72.0
+offset_right = -8.0
+offset_bottom = 360.0
+grow_horizontal = 0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Prueba"
+horizontal_alignment = 1
+
+[node name="Time30Btn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "+30 s"
+
+[node name="Time60Btn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "+1 min"
+
+[node name="TimeBossBtn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "→ 8:00 (cerca jefe)"
+
+[node name="LevelUpBtn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Subir nivel"
+
+[node name="XpFillBtn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "+9999 XP"
+
+[node name="BossBtn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Spawn jefe YA"
+
+[node name="CardDropBtn" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Drop cartas 10%: OFF"

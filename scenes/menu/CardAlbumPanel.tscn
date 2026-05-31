@@ -1,0 +1,157 @@
+[gd_scene load_steps=3 format=3 uid="uid://card_album_panel"]
+
+[ext_resource type="Script" path="res://scenes/menu/CardAlbumPanel.gd" id="1_album"]
+[ext_resource type="PackedScene" uid="uid://card_grid_entry" path="res://scenes/ui/components/CardGridEntry.tscn" id="2_entry"]
+
+[node name="CardAlbumPanel" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_album")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SlotsLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Equipamiento (máx. 5 cartas)"
+
+[node name="SlotsRow" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slot0" type="Button" parent="Margin/VBox/SlotsRow"]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+toggle_mode = true
+text = "Ranura 1"
+
+[node name="Slot1" type="Button" parent="Margin/VBox/SlotsRow"]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+toggle_mode = true
+text = "Ranura 2"
+
+[node name="Slot2" type="Button" parent="Margin/VBox/SlotsRow"]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+toggle_mode = true
+text = "Ranura 3"
+
+[node name="Slot3" type="Button" parent="Margin/VBox/SlotsRow"]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+toggle_mode = true
+text = "Ranura 4"
+
+[node name="Slot4" type="Button" parent="Margin/VBox/SlotsRow"]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+toggle_mode = true
+text = "Ranura 5"
+
+[node name="EquipHintTop" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "1) Pulsa una carta  2) Elige ranura o pulsa Equipar"
+autowrap_mode = 2
+
+[node name="AlbumLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Álbum de coleccionista"
+
+[node name="Body" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="GridScroll" type="ScrollContainer" parent="Margin/VBox/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CardGrid" type="GridContainer" parent="Margin/VBox/Body/GridScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="InspectPanel" type="PanelContainer" parent="Margin/VBox/Body"]
+visible = false
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InspectMargin" type="MarginContainer" parent="Margin/VBox/Body/InspectPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="InspectHBox" type="HBoxContainer" parent="Margin/VBox/Body/InspectPanel/InspectMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DetailsColumn" type="VBoxContainer" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="InspectName" type="Label" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+text = "Nombre"
+
+[node name="InspectSubtitle" type="Label" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+text = "Origen"
+autowrap_mode = 2
+
+[node name="InspectEffect" type="Label" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+text = "Efectos..."
+autowrap_mode = 3
+
+[node name="InspectLore" type="Label" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.58, 0.64, 0.72, 1)
+text = "Lore..."
+autowrap_mode = 3
+
+[node name="EquipHint" type="Label" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+text = "Pulsa Equipar o una ranura arriba."
+autowrap_mode = 2
+
+[node name="EquipButton" type="Button" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+layout_mode = 2
+text = "Equipar carta"
+
+[node name="ArtColumn" type="VBoxContainer" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="InspectArt" type="TextureRect" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/ArtColumn"]
+custom_minimum_size = Vector2(200, 280)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5

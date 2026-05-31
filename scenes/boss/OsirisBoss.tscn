@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://osiris_boss_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/boss/OsirisBoss.gd" id="1_osiris"]
+[ext_resource type="PackedScene" uid="uid://loot_pickup_rosurvivor" path="res://scenes/pickups/Loot.tscn" id="2_loot"]
+[ext_resource type="PackedScene" uid="uid://card_pickup_rosurvivor" path="res://scenes/pickups/CardPickup.tscn" id="3_card"]
+[ext_resource type="PackedScene" uid="uid://creamy_cast_telegraph" path="res://scenes/boss/CreamyCastTelegraph.tscn" id="4_telegraph"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="5_proc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_osiris"]
+radius = 32.0
+
+[node name="OsirisBoss" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_osiris")
+loot_scene = ExtResource("2_loot")
+card_drop_scene = ExtResource("3_card")
+aoe_telegraph_scene = ExtResource("4_telegraph")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot"]
+script = ExtResource("5_proc")
+shape = 0
+fill_color = Color(0.5, 0.85, 0.35, 1)
+texture_size = 40
+display_scale = 1.2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_osiris")
+
+[node name="ContactDamageTimer" type="Timer" parent="."]
+wait_time = 0.7
+one_shot = true
+
+[node name="UI" type="Node2D" parent="."]
+position = Vector2(0, -58)
+
+[node name="HPBar" type="ProgressBar" parent="UI"]
+offset_left = -70.0
+offset_top = -8.0
+offset_right = 70.0
+offset_bottom = 4.0
+max_value = 2000.0
+value = 2000.0
+show_percentage = false

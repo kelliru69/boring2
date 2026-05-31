@@ -1,0 +1,168 @@
+[gd_scene load_steps=3 format=3 uid="uid://title_screen_rosurvivor"]
+
+
+
+[ext_resource type="Script" path="res://scenes/menu/TitleScreen.gd" id="1_title"]
+
+[ext_resource type="PackedScene" uid="uid://options_panel_rosurvivor" path="res://scenes/ui/OptionsPanel.tscn" id="2_opts"]
+
+
+
+[node name="TitleScreen" type="Control"]
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+grow_horizontal = 2
+
+grow_vertical = 2
+
+script = ExtResource("1_title")
+
+
+
+[node name="Background" type="TextureRect" parent="."]
+
+layout_mode = 1
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+grow_horizontal = 2
+
+grow_vertical = 2
+
+expand_mode = 1
+
+stretch_mode = 6
+
+
+
+[node name="Overlay" type="ColorRect" parent="."]
+
+layout_mode = 1
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+grow_horizontal = 2
+
+grow_vertical = 2
+
+color = Color(0.02, 0.04, 0.08, 0.55)
+
+
+
+[node name="MenuPanel" type="PanelContainer" parent="."]
+
+layout_mode = 1
+
+anchors_preset = 8
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -240.0
+
+offset_top = -190.0
+
+offset_right = 240.0
+
+offset_bottom = 190.0
+
+grow_horizontal = 2
+
+grow_vertical = 2
+
+
+
+[node name="Margin" type="MarginContainer" parent="MenuPanel"]
+
+layout_mode = 2
+
+theme_override_constants/margin_left = 24
+
+theme_override_constants/margin_top = 20
+
+theme_override_constants/margin_right = 24
+
+theme_override_constants/margin_bottom = 20
+
+
+
+[node name="VBox" type="VBoxContainer" parent="MenuPanel/Margin"]
+
+layout_mode = 2
+
+theme_override_constants/separation = 16
+
+
+
+[node name="TitleLabel" type="Label" parent="MenuPanel/Margin/VBox"]
+
+layout_mode = 2
+
+text = "boring"
+
+horizontal_alignment = 1
+
+
+
+[node name="SubtitleLabel" type="Label" parent="MenuPanel/Margin/VBox"]
+
+layout_mode = 2
+
+text = "test para kellinduras"
+
+horizontal_alignment = 1
+
+
+
+[node name="StartButton" type="Button" parent="MenuPanel/Margin/VBox"]
+
+custom_minimum_size = Vector2(0, 50)
+
+layout_mode = 2
+
+text = "Iniciar Partida"
+
+
+
+[node name="OptionsButton" type="Button" parent="MenuPanel/Margin/VBox"]
+
+custom_minimum_size = Vector2(0, 46)
+
+layout_mode = 2
+
+text = "Opciones"
+
+
+
+[node name="QuitButton" type="Button" parent="MenuPanel/Margin/VBox"]
+
+custom_minimum_size = Vector2(0, 46)
+
+layout_mode = 2
+
+text = "Salir al Escritorio"
+
+
+
+[node name="OptionsPanel" parent="." instance=ExtResource("2_opts")]
+

@@ -1,0 +1,42 @@
+[gd_scene load_steps=11 format=3 uid="uid://main_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/main/Main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scenes/world/FieldSkyBackdrop.gd" id="2_sky"]
+[ext_resource type="PackedScene" uid="uid://osiris_boss_rosurvivor" path="res://scenes/boss/OsirisBoss.tscn" id="3_osiris"]
+[ext_resource type="PackedScene" uid="uid://player_rosurvivor" path="res://scenes/player/Player.tscn" id="4_player"]
+[ext_resource type="PackedScene" uid="uid://enemy_rosurvivor" path="res://scenes/enemy/Enemy.tscn" id="5_enemy"]
+[ext_resource type="PackedScene" uid="uid://creamy_boss_rosurvivor" path="res://scenes/boss/CreamyBoss.tscn" id="5b_boss"]
+[ext_resource type="PackedScene" uid="uid://gamehud_rosurvivor" path="res://scenes/ui/GameHUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://levelup_ui_rosurvivor" path="res://scenes/ui/LevelUpUI.tscn" id="7_levelup"]
+[ext_resource type="PackedScene" uid="uid://run_result_ui" path="res://scenes/ui/RunResultUI.tscn" id="8_result"]
+[ext_resource type="PackedScene" uid="uid://pause_menu_rosurvivor" path="res://scenes/ui/PauseMenu.tscn" id="9_pause"]
+[ext_resource type="PackedScene" uid="uid://debug_run_panel_rosurvivor" path="res://scenes/ui/DebugRunPanel.tscn" id="10_debug"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+enemy_scene = ExtResource("5_enemy")
+creamy_boss_scene = ExtResource("5b_boss")
+osiris_boss_scene = ExtResource("3_osiris")
+
+[node name="FieldSky" type="CanvasLayer" parent="."]
+layer = -200
+script = ExtResource("2_sky")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 1.65
+autostart = true
+
+[node name="GameHUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="LevelUpUI" parent="." instance=ExtResource("7_levelup")]
+
+[node name="RunResultUI" parent="." instance=ExtResource("8_result")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("9_pause")]
+
+[node name="DebugRunPanel" parent="." instance=ExtResource("10_debug")]

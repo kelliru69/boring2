@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://cold_bolt_skill"]
+
+[ext_resource type="Script" path="res://scenes/skills/ColdBolt.gd" id="1_cold"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="2_proc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cold"]
+radius = 6.0
+
+[node name="ColdBolt" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("1_cold")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+script = ExtResource("2_proc")
+shape = 0
+fill_color = Color(0.45, 0.85, 1, 1)
+texture_size = 14
+display_scale = 0.95
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_cold")

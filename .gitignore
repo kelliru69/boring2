@@ -1,0 +1,23 @@
+# Godot 4+
+.godot/
+.import/
+*.translation
+
+# Export / builds (no subir el .exe al repo; va a Releases)
+build/
+export/
+*.exe
+*.pck
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Logs
+*.log
+
+# Android (si exportas en el futuro)
+/android/

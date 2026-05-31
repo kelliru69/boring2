@@ -1,0 +1,101 @@
+[gd_scene load_steps=12 format=3 uid="uid://player_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/player/Player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="2_proc"]
+[ext_resource type="PackedScene" uid="uid://fire_bolt_skill" path="res://scenes/skills/FireBolt.tscn" id="3_fire"]
+[ext_resource type="PackedScene" uid="uid://cold_bolt_skill" path="res://scenes/skills/ColdBolt.tscn" id="4_cold"]
+[ext_resource type="PackedScene" uid="uid://thunderstorm_skill" path="res://scenes/skills/Thunderstorm.tscn" id="5_storm"]
+[ext_resource type="PackedScene" uid="uid://sight_skill" path="res://scenes/skills/Sight.tscn" id="6_sight"]
+[ext_resource type="PackedScene" uid="uid://bash_arc_skill" path="res://scenes/skills/BashArc.tscn" id="7_bash"]
+[ext_resource type="PackedScene" uid="uid://magnum_break_skill" path="res://scenes/skills/MagnumBreak.tscn" id="8_magnum"]
+[ext_resource type="Script" path="res://scripts/audio/hit_sound_player.gd" id="9_hit"]
+[ext_resource type="Script" path="res://scripts/skills/active_skill_controller.gd" id="10_active"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_loot_magnet"]
+radius = 96.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_player")
+fire_bolt_scene = ExtResource("3_fire")
+cold_bolt_scene = ExtResource("4_cold")
+thunderstorm_scene = ExtResource("5_storm")
+bash_scene = ExtResource("7_bash")
+magnum_scene = ExtResource("8_magnum")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
+texture_filter = 1
+visible = false
+centered = true
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot"]
+script = ExtResource("2_proc")
+shape = 0
+fill_color = Color(0.35, 0.55, 1, 1)
+texture_size = 32
+display_scale = 1.1
+
+[node name="FloatingHPBar" type="ProgressBar" parent="."]
+offset_left = -36.0
+offset_top = 18.0
+offset_right = 36.0
+offset_bottom = 34.0
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="Sight" parent="." instance=ExtResource("6_sight")]
+
+[node name="SkillTimers" type="Node" parent="."]
+
+[node name="FireBoltTimer" type="Timer" parent="SkillTimers"]
+wait_time = 0.9
+autostart = false
+
+[node name="ColdBoltTimer" type="Timer" parent="SkillTimers"]
+wait_time = 2.5
+autostart = false
+
+[node name="ThunderstormTimer" type="Timer" parent="SkillTimers"]
+wait_time = 4.0
+autostart = false
+
+[node name="BashTimer" type="Timer" parent="SkillTimers"]
+wait_time = 0.85
+autostart = false
+
+[node name="MagnumTimer" type="Timer" parent="SkillTimers"]
+wait_time = 5.0
+autostart = false
+
+[node name="RegenTimer" type="Timer" parent="SkillTimers"]
+wait_time = 2.0
+autostart = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_player")
+
+[node name="LootCollector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LootCollector"]
+shape = SubResource("CircleShape2D_loot_magnet")
+
+[node name="HitSoundPlayer" type="AudioStreamPlayer2D" parent="."]
+max_polyphony = 8
+script = ExtResource("9_hit")
+volume_db_offset = -2.0
+max_polyphony_count = 8
+sound_paths = PackedStringArray("res://audio/hit/hit_01.wav", "res://audio/hit/hit_02.wav", "res://audio/hit/hit_03.wav")
+
+[node name="ActiveSkills" type="Node" parent="."]
+script = ExtResource("10_active")

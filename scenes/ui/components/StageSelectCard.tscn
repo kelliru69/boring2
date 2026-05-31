@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://stage_select_card"]
+
+[ext_resource type="Script" path="res://scenes/ui/components/StageSelectCard.gd" id="1_stage"]
+
+[node name="StageSelectCard" type="PanelContainer"]
+custom_minimum_size = Vector2(260, 190)
+script = ExtResource("1_stage")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Preview" type="PanelContainer" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+
+[node name="BgTint" type="ColorRect" parent="Margin/VBox/Preview"]
+layout_mode = 2
+color = Color(0.12, 0.28, 0.18, 0.85)
+
+[node name="NameLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Prontera Fields"
+
+[node name="DifficultyLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Dificultad: Normal"
+
+[node name="DescLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+autowrap_mode = 3
+text = "Praderas iniciales."

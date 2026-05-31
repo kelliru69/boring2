@@ -1,0 +1,101 @@
+[gd_scene load_steps=5 format=3 uid="uid://preparation_hub_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/menu/PreparationHub.gd" id="1_hub"]
+[ext_resource type="PackedScene" uid="uid://zeny_shop_panel" path="res://scenes/menu/ZenyShopPanel.tscn" id="2_shop"]
+[ext_resource type="PackedScene" uid="uid://card_album_panel" path="res://scenes/menu/CardAlbumPanel.tscn" id="3_album"]
+[ext_resource type="PackedScene" uid="uid://run_setup_panel" path="res://scenes/menu/RunSetupPanel.tscn" id="4_run"]
+
+[node name="PreparationHub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hub")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.04, 0.08, 0.65)
+
+[node name="TopBarPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 52.0
+grow_horizontal = 2
+
+[node name="Margin" type="MarginContainer" parent="TopBarPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="TopBar" type="HBoxContainer" parent="TopBarPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="TopBarPanel/Margin/TopBar"]
+layout_mode = 2
+text = "← Título"
+
+[node name="ShopTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
+layout_mode = 2
+text = "Tienda Zeny"
+
+[node name="CardsTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
+layout_mode = 2
+text = "Cartas"
+
+[node name="RunTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
+layout_mode = 2
+text = "Lanzar Run"
+
+[node name="Panels" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ZenyShopPanel" parent="Panels" instance=ExtResource("2_shop")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardAlbumPanel" parent="Panels" instance=ExtResource("3_album")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RunSetupPanel" parent="Panels" instance=ExtResource("4_run")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

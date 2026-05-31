@@ -1,0 +1,148 @@
+[gd_scene load_steps=4 format=3 uid="uid://pause_menu_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/ui/PauseMenu.gd" id="1_pause"]
+[ext_resource type="PackedScene" uid="uid://skill_tree_menu" path="res://scenes/ui/SkillTreeMenu.tscn" id="2_tree"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+layer = 20
+process_mode = 3
+script = ExtResource("1_pause")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.04, 0.08, 0.72)
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -260.0
+offset_right = 340.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+text = "— Pausa —"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Opciones" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+metadata/_tab_index = 0
+
+[node name="MasterRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Volumen general"
+
+[node name="MasterSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MasterValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="BgmRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+layout_mode = 2
+
+[node name="BgmLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Música (BGM)"
+
+[node name="BgmSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 55.0
+
+[node name="BgmValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+text = "55%"
+horizontal_alignment = 2
+
+[node name="SfxRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+layout_mode = 2
+
+[node name="SfxLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Efectos (SFX)"
+
+[node name="SfxSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 70.0
+
+[node name="SfxValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+text = "70%"
+horizontal_alignment = 2
+
+[node name="BgmHintLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
+text = "BGM: assets/audio/"
+autowrap_mode = 2
+
+[node name="Habilidades" type="Control" parent="PanelContainer/Margin/VBox/TabContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+metadata/_tab_index = 1
+
+[node name="SkillTreeMenu" parent="PanelContainer/Margin/VBox/TabContainer/Habilidades" instance=ExtResource("2_tree")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResumeButton" type="Button" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+text = "Continuar (ESC)"
+
+[node name="EscHint" type="Label" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+text = "Pulsa ESC para cerrar el menú"
+horizontal_alignment = 1

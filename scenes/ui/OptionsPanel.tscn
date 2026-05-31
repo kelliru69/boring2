@@ -1,0 +1,105 @@
+[gd_scene load_steps=3 format=3 uid="uid://options_panel_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/ui/OptionsPanel.gd" id="1_opts"]
+[ext_resource type="Shader" path="res://shaders/ui_backdrop_blur.gdshader" id="2_blur"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("2_blur")
+shader_parameter/blur_lod = 2.2
+shader_parameter/tint_color = Color(0.02, 0.04, 0.08, 0.78)
+
+[node name="OptionsPanel" type="CanvasLayer"]
+layer = 20
+process_mode = 3
+script = ExtResource("1_opts")
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="."]
+copy_mode = 1
+
+[node name="Dimmer" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_blur")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="PanelRoot" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="PanelRoot"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="PanelRoot/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="PanelRoot/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TitleLabel" type="Label" parent="PanelRoot/Panel/Margin/VBox"]
+layout_mode = 2
+text = "Opciones de Audio"
+horizontal_alignment = 1
+
+[node name="MusicRow" type="VBoxContainer" parent="PanelRoot/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MusicLabel" type="Label" parent="PanelRoot/Panel/Margin/VBox/MusicRow"]
+layout_mode = 2
+text = "Música"
+
+[node name="MusicHBox" type="HBoxContainer" parent="PanelRoot/Panel/Margin/VBox/MusicRow"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MusicSlider" type="HSlider" parent="PanelRoot/Panel/Margin/VBox/MusicRow/MusicHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 55.0
+
+[node name="MusicValue" type="Label" parent="PanelRoot/Panel/Margin/VBox/MusicRow/MusicHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(44, 0)
+text = "55%"
+horizontal_alignment = 2
+
+[node name="SfxRow" type="VBoxContainer" parent="PanelRoot/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SfxLabel" type="Label" parent="PanelRoot/Panel/Margin/VBox/SfxRow"]
+layout_mode = 2
+text = "Efectos de Sonido (SFX)"
+
+[node name="SfxHBox" type="HBoxContainer" parent="PanelRoot/Panel/Margin/VBox/SfxRow"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SfxSlider" type="HSlider" parent="PanelRoot/Panel/Margin/VBox/SfxRow/SfxHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 70.0
+
+[node name="SfxValue" type="Label" parent="PanelRoot/Panel/Margin/VBox/SfxRow/SfxHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(44, 0)
+text = "70%"
+horizontal_alignment = 2
+
+[node name="CloseButton" type="Button" parent="PanelRoot/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "Cerrar"

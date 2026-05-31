@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://card_pickup_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/pickups/CardPickup.gd" id="1_card"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="2_proc_sprite"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
+radius = 10.0
+
+[node name="CardPickup" type="Area2D"]
+collision_layer = 8
+collision_mask = 1
+monitoring = true
+script = ExtResource("1_card")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+script = ExtResource("2_proc_sprite")
+shape = 1
+fill_color = Color(0.95, 0.85, 0.2, 1)
+texture_size = 20
+display_scale = 0.9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pickup")

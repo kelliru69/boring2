@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://payon_bg_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/world/PayonBackground.gd" id="1_payon"]
+
+[node name="PayonBackground" type="Node2D"]
+script = ExtResource("1_payon")
+tile_px = 16
+map_visual_scale = 2.0
+arena_half_tiles = 36
+generate_map_on_ready = true
+border_tiles = 3
+ground_layer = NodePath("GroundLayer")
+path_layer = NodePath("PathLayer")
+obstacle_layer = NodePath("ObstacleLayer")
+decor_layer = NodePath("DecorLayer")
+border_layer = NodePath("BorderLayer")
+
+[node name="GroundLayer" type="TileMapLayer" parent="."]
+
+[node name="PathLayer" type="TileMapLayer" parent="."]
+
+[node name="ObstacleLayer" type="TileMapLayer" parent="."]
+
+[node name="DecorLayer" type="TileMapLayer" parent="."]
+
+[node name="BorderLayer" type="TileMapLayer" parent="."]
+
+[node name="BoundaryWalls" type="StaticBody2D" parent="."]

@@ -1,0 +1,164 @@
+[gd_scene load_steps=6 format=3 uid="uid://gamehud_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/ui/GameHUD.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scenes/ui/components/SkillActionBar.gd" id="2_skillbar"]
+[ext_resource type="Script" path="res://scenes/ui/components/PassiveSkillStrip.gd" id="3_passive"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_bg"]
+bg_color = Color(0.16, 0.17, 0.2, 0.95)
+border_width_bottom = 1
+border_color = Color(0.08, 0.09, 0.11, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_fill"]
+bg_color = Color(0.28, 0.52, 0.95, 1)
+
+[node name="GameHUD" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 44
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Nivel: 1"
+
+[node name="XpLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "XP: 0 / 0"
+
+[node name="HpLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "HP: 100 / 100"
+
+[node name="ZenyLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Zeny: 0"
+
+[node name="CardsLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Cartas: 0"
+
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Tiempo: 00:00"
+
+[node name="WaveLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+text = "Oleada 1 | Enemigos: 0"
+
+[node name="XpBarDock" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -32.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="XpBarMargin" type="MarginContainer" parent="XpBarDock"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="HBox" type="HBoxContainer" parent="XpBarDock/XpBarMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LevelBadge" type="Label" parent="XpBarDock/XpBarMargin/HBox"]
+custom_minimum_size = Vector2(52, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Nv.1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XpProgressBar" type="ProgressBar" parent="XpBarDock/XpBarMargin/HBox"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_xp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_xp_fill")
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
+[node name="XpFractionLabel" type="Label" parent="XpBarDock/XpBarMargin/HBox"]
+custom_minimum_size = Vector2(88, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.82, 1)
+theme_override_font_sizes/font_size = 12
+text = "0 / 100"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillBarDock" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -108.0
+offset_right = 110.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="SkillActionBar" type="HBoxContainer" parent="SkillBarDock"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+theme_override_constants/separation = 8
+script = ExtResource("2_skillbar")
+
+[node name="PassiveSkillDock" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 64.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="PassiveSkillStrip" type="HBoxContainer" parent="PassiveSkillDock"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+theme_override_constants/separation = 4
+script = ExtResource("3_passive")
