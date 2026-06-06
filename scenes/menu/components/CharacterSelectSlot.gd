@@ -5,9 +5,11 @@ extends Button
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
 
 signal slot_focused(character_data: CharacterData)
+signal slot_hovered(character_data: CharacterData)
 
 var character_data: CharacterData = null
 var is_locked: bool = false
+var _selected: bool = false
 
 @onready var _icon_frame: PanelContainer = $Margin/VBox/IconFrame
 @onready var _portrait: TextureRect = $Margin/VBox/IconFrame/Portrait
@@ -18,8 +20,8 @@ var is_locked: bool = false
 func _ready() -> void:
 	toggle_mode = false
 	pressed.connect(_on_pressed)
-	focus_entered.connect(_on_focus_entered)
 	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
 	_ignore_child_mouse_filters()
 	_apply_frame_style(false)
 
@@ -67,14 +69,16 @@ func setup_locked() -> void:
 	_apply_frame_style(false)
 
 
-func _on_focus_entered() -> void:
-	if character_data != null and not is_locked:
-		slot_focused.emit(character_data)
-
-
 func _on_mouse_entered() -> void:
-	if not is_locked:
-		grab_focus()
+	if character_data != null and not is_locked:
+		slot_hovered.emit(character_data)
+		if not _selected:
+			_apply_frame_style(true)
+
+
+func _on_mouse_exited() -> void:
+	if not _selected:
+		_apply_frame_style(false)
 
 
 func _on_pressed() -> void:
@@ -85,7 +89,15 @@ func _on_pressed() -> void:
 func set_highlighted(active: bool) -> void:
 	if is_locked:
 		return
+	_selected = active
 	scale = Vector2.ONE * (1.06 if active else 1.0)
+	_apply_frame_style(active)
+
+
+func set_hover_preview(active: bool) -> void:
+	if is_locked or _selected:
+		return
+	scale = Vector2.ONE * (1.03 if active else 1.0)
 	_apply_frame_style(active)
 
 

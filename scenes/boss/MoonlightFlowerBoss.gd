@@ -40,7 +40,7 @@ func _ready() -> void:
 	enemy_type = "moonlight_flower"
 	super._ready()
 	dies_on_player_contact = false
-	max_hp = 11000
+	max_hp = 20000
 	current_hp = max_hp
 	move_speed = 128.0
 	_base_move_speed = move_speed

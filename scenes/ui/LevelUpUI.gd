@@ -20,14 +20,19 @@ signal upgrade_chosen(upgrade_id: String)
 @onready var reroll_button: Button = $PanelContainer/Margin/VBox/ToolsRow/RerollButton
 @onready var eliminate_button: Button = $PanelContainer/Margin/VBox/ToolsRow/EliminateButton
 
+const OPEN_DELAY_SEC: float = 0.4
+
 var _pending_picks: int = 0
 var _current_choice_ids: Array[String] = []
 var _player: Player = null
 var _eliminate_mode: bool = false
+var _open_delay_left: float = 0.0
+var _queued_level: int = 0
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	set_process(false)
 	visible = false
 	dimmer.color = _Theme.DIMMER
 	_Theme.apply_panel(panel)
@@ -44,8 +49,25 @@ func _ready() -> void:
 
 func _on_global_level_up(new_level: int) -> void:
 	_pending_picks += 1
-	if not visible:
-		_open_selection(new_level)
+	if visible or _open_delay_left > 0.0:
+		_queued_level = new_level
+		return
+	_queue_open_selection(new_level)
+
+
+func _queue_open_selection(new_level: int) -> void:
+	_queued_level = new_level
+	_open_delay_left = OPEN_DELAY_SEC
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if _open_delay_left <= 0.0:
+		set_process(false)
+		return
+	_open_delay_left = maxf(_open_delay_left - delta, 0.0)
+	if _open_delay_left <= 0.0:
+		_open_selection(_queued_level)
 
 
 func _open_selection(new_level: int) -> void:
@@ -144,7 +166,7 @@ func _on_card_chosen(upgrade_id: String) -> void:
 	upgrade_chosen.emit(upgrade_id)
 	_pending_picks = maxi(_pending_picks - 1, 0)
 	if _pending_picks > 0:
-		_open_selection(Global.session_level)
+		_queue_open_selection(Global.session_level)
 		return
 	visible = false
 	get_tree().paused = false

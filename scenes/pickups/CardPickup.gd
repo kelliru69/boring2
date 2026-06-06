@@ -11,6 +11,8 @@ var card_data: Dictionary = {}
 
 const GROUP_CARD_PICKUP: String = "CardPickup"
 const SLEEP_DISTANCE: float = 720.0
+const PICKUP_SCALE_MULT: float = 1.35
+const _GlowShader: Shader = preload("res://shaders/card_pickup_glow.gdshader")
 
 @export var magnet_speed: float = 14.0
 @export var collect_distance: float = 14.0
@@ -57,6 +59,16 @@ func _apply_card_visual() -> void:
 			return
 	if visual.has_method("apply_visual"):
 		visual.apply_visual(_ShapeFactory.Shape.SQUARE, Color(0.95, 0.85, 0.2, 1.0))
+	_apply_glow_and_scale()
+
+
+func _apply_glow_and_scale() -> void:
+	if visual == null:
+		return
+	visual.scale = Vector2.ONE * PICKUP_SCALE_MULT
+	var mat := ShaderMaterial.new()
+	mat.shader = _GlowShader
+	visual.material = mat
 
 
 func _physics_process(delta: float) -> void:

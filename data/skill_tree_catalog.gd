@@ -8,21 +8,34 @@ const DEFAULT_ICON: String = "res://art/skills/default_icon.png"
 const SLOT_LMB: String = "lmb"
 const SLOT_RMB: String = "rmb"
 const SLOT_SPACE: String = "space"
+const SLOT_Q: String = "slot_q"
+const SLOT_E: String = "slot_e"
 
-const ALL_SLOT_IDS: Array[String] = [SLOT_LMB, SLOT_RMB, SLOT_SPACE]
+const ALL_SLOT_IDS: Array[String] = [SLOT_LMB, SLOT_RMB, SLOT_SPACE, SLOT_Q, SLOT_E]
+const MAX_COMBAT_ACTIVE_SKILLS: int = 5
 
 ## Filas extra bajo el árbol base donde se dibujan las fusiones de Job Change.
 const FUSION_GRID_ROW_OFFSET: int = 4
 
 
 static func get_skill(skill_id: String) -> Dictionary:
-	var def: Dictionary = _ALL_SKILLS.get(skill_id, {}).duplicate()
+	var resolved_id: String = resolve_skill_id(skill_id)
+	var def: Dictionary = _ALL_SKILLS.get(resolved_id, {}).duplicate()
 	if not def.is_empty():
-		def["id"] = skill_id
+		def["id"] = resolved_id
 		# Flag lógico (estado real vive en Global); aquí existe como propiedad estándar del catálogo.
 		if not def.has("is_disabled_for_combat"):
 			def["is_disabled_for_combat"] = false
 	return def
+
+
+## IDs legacy / typo → ID canónico del árbol (run_skill_levels).
+static func resolve_skill_id(skill_id: String) -> String:
+	match skill_id:
+		"frost_diver":
+			return "frost_dive"
+		_:
+			return skill_id
 
 
 static func get_skills_for_class(class_id: String) -> Array[String]:

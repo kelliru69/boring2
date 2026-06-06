@@ -6,6 +6,9 @@ const _MapConfig = preload("res://data/map_config.gd")
 @onready var level_label: Label = $MarginContainer/VBox/LevelLabel
 @onready var xp_label: Label = $MarginContainer/VBox/XpLabel
 @onready var zeny_label: Label = $MarginContainer/VBox/ZenyLabel
+@onready var fighter_health_hud: FighterHealthHud = $FighterHealthHud
+@onready var zeny_counter_hud: ZenyCounterHud = $ZenyCounterHud
+@onready var consumable_hud: ConsumableHudBar = $ConsumableHudBar
 @onready var time_label: Label = $MarginContainer/VBox/TimeLabel
 @onready var run_clock_label: Label = $NorthClockDock/Center/RunClockLabel
 @onready var run_hud_right_panel: VBoxContainer = $RightHudDock/RunHudRightPanel
@@ -57,9 +60,21 @@ var _left_stats_visible: bool = true
 
 
 func _ready() -> void:
+	if xp_label:
+		xp_label.visible = false
+	if hp_label:
+		hp_label.visible = false
+	if zeny_label:
+		zeny_label.visible = false
+	if xp_fraction_label:
+		xp_fraction_label.visible = false
 	Global.level_up.connect(_on_level_up)
 	Global.zeny_gained.connect(_on_zeny_gained)
 	Global.campaign_zeny_gained.connect(_on_campaign_zeny_gained)
+	if not Global.zeny_gained.is_connected(_on_zeny_counter_refresh):
+		Global.zeny_gained.connect(_on_zeny_counter_refresh)
+	if not Global.campaign_zeny_gained.is_connected(_on_zeny_counter_refresh):
+		Global.campaign_zeny_gained.connect(_on_zeny_counter_refresh)
 	Global.card_collected.connect(_on_card_collected)
 	if not Global.skill_tree_changed.is_connected(_on_skill_tree_changed):
 		Global.skill_tree_changed.connect(_on_skill_tree_changed)
@@ -152,6 +167,8 @@ func _find_player_health() -> void:
 	if player == null:
 		return
 	_player = player
+	if fighter_health_hud:
+		fighter_health_hud.bind_player(player)
 	if not player.health_changed.is_connected(_on_health_changed):
 		player.health_changed.connect(_on_health_changed)
 	_on_health_changed(player.current_hp, player.max_hp)
@@ -234,20 +251,25 @@ func _on_level_up(new_level: int) -> void:
 	_refresh_xp()
 
 
-func _on_zeny_gained(_amount: int, total: int) -> void:
-	if _MapConfig.is_campaign_tier_map(Game.selected_map_id):
-		return
-	zeny_label.text = "Zeny: %d" % total
+func _on_zeny_gained(_amount: int, _total: int) -> void:
+	pass
 
 
-func _on_campaign_zeny_gained(_amount: int, total: int) -> void:
-	if not _MapConfig.is_campaign_tier_map(Game.selected_map_id):
-		return
-	zeny_label.text = "Zeny campaña: %d Z⚔" % total
+func _on_campaign_zeny_gained(_amount: int, _total: int) -> void:
+	pass
+
+
+func _on_zeny_counter_refresh(_amount: int = 0, _total: int = 0) -> void:
+	if zeny_counter_hud:
+		zeny_counter_hud.refresh()
 
 
 func _on_skill_tree_changed() -> void:
 	_update_class_label()
+	if fighter_health_hud:
+		fighter_health_hud.set_fighter_name(
+			Global.current_class if not Global.current_class.is_empty() else Game.selected_class_id
+		)
 	if run_hud_right_panel and run_hud_right_panel.has_method("refresh"):
 		run_hud_right_panel.refresh()
 
@@ -264,11 +286,8 @@ func _refresh_global_ui() -> void:
 		level_label.text = "Nivel: %d" % Global.session_level
 	if xp_bar_level_badge:
 		xp_bar_level_badge.text = "Lv.%d" % Global.session_level
-	if zeny_label:
-		if _MapConfig.is_campaign_tier_map(Game.selected_map_id):
-			zeny_label.text = "Zeny campaña: %d Z⚔" % Global.campaign_zeny
-		else:
-			zeny_label.text = "Zeny: %d" % Global.total_zeny
+	if zeny_counter_hud:
+		zeny_counter_hud.refresh()
 	if cards_label:
 		cards_label.text = "Cartas: %d" % Global.get_total_owned_card_copies()
 	_refresh_xp()
@@ -277,12 +296,16 @@ func _refresh_global_ui() -> void:
 func _refresh_xp() -> void:
 	var current: int = Global.session_xp
 	var required: int = maxi(Global.session_xp_required, 1)
-	xp_label.text = "XP: %d / %d" % [current, required]
 	if xp_progress_bar:
 		xp_progress_bar.max_value = float(required)
 		xp_progress_bar.value = float(current)
-	if xp_fraction_label:
-		xp_fraction_label.text = "%d / %d" % [current, required]
+		var ratio: float = float(current) / float(required)
+		if ratio > 0.66:
+			xp_progress_bar.modulate = Color(0.35, 0.72, 1.0, 1.0)
+		elif ratio > 0.33:
+			xp_progress_bar.modulate = Color(0.55, 0.82, 1.0, 1.0)
+		else:
+			xp_progress_bar.modulate = Color(0.42, 0.58, 0.95, 1.0)
 
 
 func _update_time() -> void:

@@ -23,6 +23,7 @@ enum PanelMode { HUB, SHOP, ALBUM }
 
 
 func _ready() -> void:
+	PrepAccessButton.attach_to(self)
 	if ResourceLoader.exists(BACKGROUND_PATH):
 		background.texture = load(BACKGROUND_PATH) as Texture2D
 	_Theme.apply_panel(hub_panel)

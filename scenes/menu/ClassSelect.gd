@@ -30,6 +30,7 @@ var _bg_tween: Tween = null
 
 
 func _ready() -> void:
+	PrepAccessButton.attach_to(self)
 	if ResourceLoader.exists(BACKGROUND_PATH):
 		background.texture = load(BACKGROUND_PATH) as Texture2D
 	class_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED

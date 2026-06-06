@@ -59,7 +59,7 @@ static func _pick_random_payon_map2_stat(eligible_pool: Array[String]) -> String
 
 
 static func _can_offer_map2_stat(stat_id: String, class_id: String) -> bool:
-	if Game.selected_map_id != _MapConfig.MAP_PAYON:
+	if not _MapConfig.is_at_least_map_tier(Game.selected_map_id, 2):
 		return false
 	return _is_map2_stat_for_class(stat_id, class_id)
 

@@ -17,6 +17,7 @@ const _EntryScene: PackedScene = preload("res://scenes/ui/components/CardGridEnt
 @onready var equip_hint: Label = $Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn/EquipHint
 @onready var equip_hint_top: Label = $Margin/VBox/EquipHintTop
 @onready var equip_button: Button = $Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn/EquipButton
+@onready var evolve_button: Button = $Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn/EvolveButton
 @onready var slots_label: Label = $Margin/VBox/SlotsLabel
 @onready var album_label: Label = $Margin/VBox/AlbumLabel
 @onready var slot_buttons: Array[Button] = [
@@ -48,6 +49,9 @@ func _ready() -> void:
 		_Theme.apply_button(btn, 40.0)
 		btn.toggled.connect(_on_slot_toggled.bind(btn))
 	equip_button.pressed.connect(_on_equip_pressed)
+	if evolve_button:
+		_Theme.apply_button(evolve_button, 40.0)
+		evolve_button.pressed.connect(_on_evolve_pressed)
 	Global.equipped_cards_changed.connect(_refresh)
 	Global.card_collected.connect(func(_id, _d): _refresh())
 
@@ -158,7 +162,28 @@ func _show_inspection(card_id: String) -> void:
 	else:
 		equip_button.text = "Equipar carta"
 		equip_button.disabled = false
+	if evolve_button:
+		var can_evolve: bool = Global.can_evolve_card(card_id)
+		evolve_button.visible = can_evolve or Global.is_plus_card(card_id)
+		evolve_button.disabled = not can_evolve
+		if can_evolve:
+			evolve_button.text = "Evolucionar (x%d → +)" % Global.CARD_EVOLVE_COST
+		elif Global.is_plus_card(card_id):
+			evolve_button.text = "Carta evolucionada (+)"
+		else:
+			evolve_button.visible = owned >= 3
+			evolve_button.text = "Evolucionar (necesitas x%d)" % Global.CARD_EVOLVE_COST
 	_update_equip_hint()
+
+
+func _on_evolve_pressed() -> void:
+	if _inspected_card_id.is_empty():
+		return
+	if not Global.can_evolve_card(_inspected_card_id):
+		return
+	Audio.play_ui_click()
+	if Global.evolve_card_to_plus(_inspected_card_id):
+		_refresh()
 
 
 func _refresh() -> void:
@@ -190,8 +215,10 @@ func _update_slot_buttons() -> void:
 func _rebuild_grid() -> void:
 	for child: Node in card_grid.get_children():
 		child.queue_free()
-	for card_id: String in _Catalog.ALL_CARD_IDS:
+	for card_id: String in _Catalog.get_all_album_card_ids():
 		var discovered: bool = Global.unlocked_cards.has(card_id)
+		if card_id.ends_with("_plus") and not discovered:
+			continue
 		var def: Dictionary = _Catalog.get_definition(card_id)
 		var entry: PanelContainer = _EntryScene.instantiate() as PanelContainer
 		card_grid.add_child(entry)

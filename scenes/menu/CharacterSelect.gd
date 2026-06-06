@@ -30,6 +30,7 @@ var _preview_tween: Tween = null
 
 
 func _ready() -> void:
+	PrepAccessButton.attach_to(self)
 	if ResourceLoader.exists(BACKGROUND_PATH):
 		background.texture = load(BACKGROUND_PATH) as Texture2D
 	splash_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -44,9 +45,8 @@ func _ready() -> void:
 	confirm_button.pressed.connect(_on_confirm_pressed)
 	_characters = _Catalog.get_all_characters()
 	_build_grid()
-	if not _characters.is_empty():
-		_select_character(_characters[0], false)
-		_focus_first_unlocked()
+	preview_name.text = "Selecciona un avatar"
+	confirm_button.disabled = true
 	preview_hbox.resized.connect(_layout_preview)
 	call_deferred("_layout_preview")
 
@@ -84,6 +84,7 @@ func _build_grid() -> void:
 		if entry is CharacterData:
 			slot.setup(entry as CharacterData)
 			slot.slot_focused.connect(_on_slot_focused)
+			slot.slot_hovered.connect(_on_slot_hovered)
 		else:
 			slot.setup_locked()
 		_slots.append(slot)
@@ -96,8 +97,16 @@ func _focus_first_unlocked() -> void:
 			return
 
 
+func _on_slot_hovered(character: CharacterData) -> void:
+	for slot: CharacterSelectSlot in _slots:
+		if slot.is_locked:
+			continue
+		slot.set_hover_preview(slot.character_data == character)
+
+
 func _on_slot_focused(character: CharacterData) -> void:
 	_select_character(character, true)
+	confirm_button.disabled = false
 
 
 func _select_character(character: CharacterData, animate: bool) -> void:
@@ -105,7 +114,10 @@ func _select_character(character: CharacterData, animate: bool) -> void:
 		return
 	_selected = character
 	for slot: CharacterSelectSlot in _slots:
-		slot.set_highlighted(not slot.is_locked and slot.character_data == character)
+		var selected: bool = not slot.is_locked and slot.character_data == character
+		slot.set_highlighted(selected)
+		if not selected:
+			slot.set_hover_preview(false)
 	preview_name.text = character.character_name
 	_update_preview_visuals(character, animate)
 

@@ -76,7 +76,7 @@ static func get_definition(type_id: String) -> Dictionary:
 				"sprite_height": 52.0,
 				"anim_fps": 9.0,
 				"color": Color(0.95, 0.75, 1.0, 1.0),
-				"max_hp": 3200,
+				"max_hp": 20000,
 				"move_speed": 145.0,
 				"contact_damage": 32,
 				"zeny_reward": 420,

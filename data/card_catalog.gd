@@ -23,6 +23,14 @@ const ALL_CARD_IDS: Array[String] = [
 
 
 static func get_definition(card_id: String) -> Dictionary:
+	if card_id.ends_with("_plus"):
+		var base_id: String = card_id.trim_suffix("_plus")
+		var base_def: Dictionary = get_definition(base_id)
+		return {
+			"name": "%s+" % String(base_def.get("name", base_id)),
+			"lore": "%s\n\nVariante evolucionada (+): efectos pasivos duplicados." % String(base_def.get("lore", "")),
+			"subtitle": "Carta evolucionada (+)",
+		}
 	match card_id:
 		"carta_poring":
 			return _def("Poring", "Un slime gelatinoso de campos abiertos. Su carta otorga resistencia básica.", "Monstruo común de Prontera.")
@@ -62,3 +70,14 @@ static func get_definition(card_id: String) -> Dictionary:
 
 static func _def(name: String, lore: String, subtitle: String) -> Dictionary:
 	return {"name": name, "lore": lore, "subtitle": subtitle}
+
+
+## IDs del álbum: cartas base + variantes plus (solo visibles si están desbloqueadas).
+static func get_all_album_card_ids() -> Array[String]:
+	var ids: Array[String] = []
+	ids.append_array(ALL_CARD_IDS)
+	for base_id: String in ALL_CARD_IDS:
+		var plus_id: String = "%s_plus" % base_id
+		if not ids.has(plus_id):
+			ids.append(plus_id)
+	return ids

@@ -3,7 +3,7 @@ class_name HealBuffDrop
 extends Area2D
 
 const GROUP: String = "HealBuffDrop"
-const HEAL_MAX_HP_RATIO: float = 0.20
+const _Consumables = preload("res://scripts/inventory/consumable_inventory.gd")
 const CROSS_TEXTURE_SIZE: int = 36
 
 var _collected: bool = false
@@ -40,7 +40,10 @@ func _on_body_entered(body: Node2D) -> void:
 	if player == null:
 		return
 	_collected = true
-	player.apply_heal_buff_pickup(HEAL_MAX_HP_RATIO)
+	player.apply_heal_buff_pickup(0.20)
+	_Consumables.add_item("heal_potion", 1)
+	if _Consumables.get_hotkey_item(1).is_empty():
+		_Consumables.assign_hotkey(1, "heal_potion")
 	queue_free()
 
 

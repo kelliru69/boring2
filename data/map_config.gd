@@ -79,3 +79,7 @@ static func get_map_tier(map_id: String) -> int:
 ## Mapas cuyo Zeny solo alimenta la tienda de campaña (Orc Village en adelante).
 static func is_campaign_tier_map(map_id: String) -> bool:
 	return get_map_tier(map_id) >= 3
+
+
+static func is_at_least_map_tier(map_id: String, min_tier: int) -> bool:
+	return get_map_tier(map_id) >= min_tier

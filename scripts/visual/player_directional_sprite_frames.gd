@@ -4,7 +4,8 @@ class_name PlayerDirectionalSpriteFrames
 
 const HFRAMES: int = 4
 const VFRAMES: int = 5
-const ANIM_SPEED: float = 5.0
+## +25% velocidad de loop walk para coincidir con desplazamiento físico.
+const ANIM_SPEED: float = 6.25
 
 ## Filas del template Eris (celda cuadrada): 0 abajo, 1 diag abajo-derecha, 2 derecha, 3 diag arriba-derecha, 4 arriba.
 const ROW_DOWN: int = 0

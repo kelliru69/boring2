@@ -66,4 +66,5 @@ func setup(
 			_Theme.style_zeny(_price, 17)
 	_buy_btn.text = "Comprar" if cost >= 0 else "Completo"
 	_buy_btn.disabled = not can_buy or cost < 0
-	_minus_btn.disabled = level <= 0
+	_minus_btn.visible = Global.can_decrease_shop(_upgrade_id)
+	_minus_btn.disabled = level <= 0 or not Global.can_decrease_shop(_upgrade_id)

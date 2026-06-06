@@ -23,6 +23,7 @@ const BACKGROUND_PATH: String = "res://art/background.png"
 
 
 func _ready() -> void:
+	PrepAccessButton.attach_to(self)
 	_apply_visuals()
 	start_button.pressed.connect(_on_start_pressed)
 	scoreboard_button.pressed.connect(_on_scoreboard_pressed)

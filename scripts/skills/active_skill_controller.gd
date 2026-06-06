@@ -6,6 +6,7 @@ signal slot_cooldown_updated(slot_id: String, ratio: float)
 signal slot_skills_changed
 
 const _SkillDefs = preload("res://data/skill_definitions.gd")
+const _Consumables = preload("res://scripts/inventory/consumable_inventory.gd")
 
 var _player: Player = null
 var _slot_cooldowns: Dictionary = {}
@@ -73,6 +74,11 @@ func try_handle_input(event: InputEvent) -> bool:
 			continue
 		if try_cast_slot(slot_id):
 			return true
+	for i: int in range(1, 10):
+		var consumable_action: String = "consumable_%d" % i
+		if event.is_action_pressed(consumable_action):
+			if _Consumables.try_use_hotkey(i, _player):
+				return true
 	return false
 
 

@@ -1,6 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://gamehud_rosurvivor"]
+[gd_scene load_steps=12 format=3 uid="uid://gamehud_rosurvivor"]
 
 [ext_resource type="Script" path="res://scenes/ui/GameHUD.gd" id="1_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/FighterHealthHud.tscn" id="8_fhh"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/ZenyCounterHud.tscn" id="9_zch"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/ConsumableHudBar.tscn" id="10_chb"]
 [ext_resource type="Script" path="res://scenes/ui/components/WallWaveWarningOverlay.gd" id="6_wall_warn"]
 [ext_resource type="Script" path="res://scenes/ui/components/BossHealthBarPanel.gd" id="7_boss_hp"]
 [ext_resource type="Script" path="res://scenes/ui/components/SkillActionBar.gd" id="2_skillbar"]
@@ -19,6 +22,12 @@ bg_color = Color(0.28, 0.52, 0.95, 1)
 [node name="GameHUD" type="CanvasLayer"]
 layer = 10
 script = ExtResource("1_hud")
+
+[node name="FighterHealthHud" parent="." instance=ExtResource("8_fhh")]
+
+[node name="ZenyCounterHud" parent="." instance=ExtResource("9_zch")]
+
+[node name="ConsumableHudBar" parent="." instance=ExtResource("10_chb")]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -150,9 +159,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -110.0
+offset_left = -160.0
 offset_top = -108.0
-offset_right = 110.0
+offset_right = 160.0
 offset_bottom = -36.0
 grow_horizontal = 2
 grow_vertical = 0

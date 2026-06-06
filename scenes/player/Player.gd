@@ -1698,6 +1698,7 @@ func _play_directional_anim(anim_name: StringName, flip_h: bool, frames: SpriteF
 	animated_visual.flip_h = flip_h
 	if not frames.has_animation(anim_name):
 		return
+	animated_visual.speed_scale = 1.25 if String(anim_name).begins_with("walk") else 1.0
 	if animated_visual.animation != anim_name:
 		animated_visual.play(anim_name)
 	elif not animated_visual.is_playing():
@@ -1943,6 +1944,15 @@ func increase_max_hp(amount: int) -> void:
 
 func increase_move_speed(percent: float) -> void:
 	move_speed *= 1.0 + percent
+
+
+func apply_speed_buff(duration_sec: float, speed_bonus: float = 0.35) -> void:
+	if _is_dead:
+		return
+	_support_agi_mult = maxf(_support_agi_mult, 1.0 + speed_bonus)
+	_support_buff_timer = maxf(_support_buff_timer, duration_sec)
+	support_buffs_changed.emit(_support_buff_timer, true)
+	Audio.play_sfx_varied("buff_pickup", 0.9, 1.1)
 
 
 func increase_fire_damage(amount: int) -> void:

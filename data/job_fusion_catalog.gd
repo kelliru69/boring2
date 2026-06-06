@@ -73,12 +73,12 @@ static func get_fusion_recipes_for_job(job_id: String) -> Array[Dictionary]:
 	match job_id:
 		Game.JOB_WIZARD:
 			recipes.append(_recipe(SKILL_LORD_OF_VERMILION, ["thunderstorm", "sight"], "Lord of Vermilion"))
-			recipes.append(_recipe(SKILL_STORM_GUST, ["frost_diver", "cold_bolt"], "Storm Gust"))
+			recipes.append(_recipe(SKILL_STORM_GUST, ["frost_dive", "cold_bolt"], "Storm Gust"))
 			recipes.append(_recipe(SKILL_METEOR_STORM, ["fire_bolt", "firewall"], "Meteor Storm"))
 			recipes.append(_recipe(SKILL_JUPITEL_THUNDER, ["soul_strike", "lightning_bolt"], "Jupitel Thunder"))
 		Game.JOB_SAGE:
 			recipes.append(_recipe(SKILL_LAND_PROTECTOR, ["sight", "firewall"], "Land Protector"))
-			recipes.append(_recipe(SKILL_HEAVENS_DRIVE, ["frost_diver", "thunderstorm"], "Heaven's Drive"))
+			recipes.append(_recipe(SKILL_HEAVENS_DRIVE, ["frost_dive", "thunderstorm"], "Heaven's Drive"))
 			recipes.append(_recipe(SKILL_AUTOCAST, ["soul_strike", "cold_bolt"], "Autocast"))
 			recipes.append(_recipe(SKILL_DIAMOND_DUST, ["fire_bolt", "lightning_bolt"], "Diamond Dust"))
 		Game.JOB_KNIGHT:
@@ -121,11 +121,78 @@ static func try_apply_fusions(job_id: String) -> Array[String]:
 		var fusion_id: String = String(recipe.get("fusion_skill", ""))
 		if fusion_id.is_empty() or is_fusion_owned(fusion_id):
 			continue
-		if not _recipe_satisfied(recipe):
-			continue
-		_consume_recipe_ingredients(recipe)
-		granted.append(fusion_id)
+		if apply_fusion_recipe(recipe):
+			granted.append(fusion_id)
 	return granted
+
+
+## Transacción: verifica Nv.5 → otorga fusión → solo entonces deshabilita ingredientes.
+static func apply_fusion_recipe(recipe: Dictionary) -> bool:
+	var fusion_id: String = String(recipe.get("fusion_skill", ""))
+	if fusion_id.is_empty() or is_fusion_owned(fusion_id):
+		return false
+	if not _recipe_satisfied(recipe):
+		return false
+	if not Global.grant_fusion_skill(fusion_id):
+		return false
+	_consume_recipe_ingredients(recipe)
+	return true
+
+
+static func get_recipe_for_fusion(fusion_id: String, job_id: String = "") -> Dictionary:
+	if fusion_id.is_empty():
+		return {}
+	var jobs: Array[String] = []
+	if not job_id.is_empty():
+		jobs.append(job_id)
+	else:
+		jobs = [Game.JOB_WIZARD, Game.JOB_SAGE, Game.JOB_KNIGHT, Game.JOB_CRUSADER]
+	for check_job: String in jobs:
+		for recipe: Dictionary in get_fusion_recipes_for_job(check_job):
+			if String(recipe.get("fusion_skill", "")) == fusion_id:
+				return recipe
+	return {}
+
+
+static func get_fusion_ingredients_label(recipe: Dictionary) -> String:
+	var labels: PackedStringArray = PackedStringArray()
+	for raw_id: Variant in recipe.get("ingredients", []):
+		var ingredient_id: String = String(raw_id)
+		var lvl: int = _get_ingredient_level(ingredient_id)
+		var name: String = _ingredient_display_name(ingredient_id)
+		var mark: String = " ✓" if lvl >= FUSION_REQUIRED_LEVEL else " (%d/5)" % lvl
+		if (
+			not ingredient_id.begins_with("stat_")
+			and Global.is_skill_disabled_for_combat(_SkillTree.resolve_skill_id(ingredient_id))
+			and lvl >= FUSION_REQUIRED_LEVEL
+		):
+			mark += " [fusionado]"
+		labels.append("%s%s" % [name, mark])
+	return " + ".join(labels)
+
+
+## Texto de estado para el árbol al inspeccionar una fusión bloqueada.
+static func describe_fusion_skill_status(fusion_id: String) -> String:
+	if is_fusion_owned(fusion_id):
+		return "Fusión desbloqueada."
+	var job_id: String = Global.current_class
+	if not is_advanced_job(job_id):
+		return "Requiere Job Change (clase avanzada: Wizard, Sage, Knight o Crusader)."
+	var recipe: Dictionary = get_recipe_for_fusion(fusion_id, job_id)
+	if recipe.is_empty():
+		return "Esta fusión no pertenece a tu clase avanzada actual."
+	var fusion_name: String = String(recipe.get("display_name", fusion_id))
+	var ingredients: String = get_fusion_ingredients_label(recipe)
+	if _recipe_satisfied(recipe):
+		return (
+			"%s — requisitos cumplidos (%s).\n"
+			% [fusion_name, ingredients]
+			+ "Se aplicará al revisar el árbol o al subir un ingrediente."
+		)
+	var missing: String = _format_missing_requirements(recipe)
+	if missing.is_empty():
+		return "%s — necesitas: %s (Nv.5 cada una)." % [fusion_name, ingredients]
+	return "%s — faltan: %s.\nRequisitos: %s" % [fusion_name, missing, ingredients]
 
 
 static func get_map3_passive_stat_ids(job_id: String) -> Array[String]:
@@ -180,7 +247,7 @@ static func _ingredients_at_level(ingredients: Array, required_level: int) -> bo
 		if ingredient_id.begins_with("stat_"):
 			if Global.get_run_stat_level(ingredient_id) < required_level:
 				return false
-		elif Global.get_skill_level(ingredient_id) < required_level:
+		elif Global.get_skill_level(_SkillTree.resolve_skill_id(ingredient_id)) < required_level:
 			return false
 	return true
 
@@ -188,20 +255,20 @@ static func _ingredients_at_level(ingredients: Array, required_level: int) -> bo
 static func _alt_ingredients_satisfied(alt: Array) -> bool:
 	if alt.size() < 2:
 		return false
-	var first: String = String(alt[0])
+	var first: String = _SkillTree.resolve_skill_id(String(alt[0]))
 	if Global.get_skill_level(first) < FUSION_REQUIRED_LEVEL:
 		return false
 	var second: String = String(alt[1])
 	if second.begins_with("stat_"):
 		return Global.get_run_stat_level(second) >= FUSION_REQUIRED_LEVEL
-	return Global.get_skill_level(second) >= FUSION_REQUIRED_LEVEL
+	return Global.get_skill_level(_SkillTree.resolve_skill_id(second)) >= FUSION_REQUIRED_LEVEL
 
 
 static func _consume_recipe_ingredients(recipe: Dictionary) -> void:
 	var used_alt: bool = not _ingredients_at_level(recipe.get("ingredients", []), FUSION_REQUIRED_LEVEL)
 	var consumed: Array = recipe.get("alt_ingredients", []) if used_alt else recipe.get("ingredients", [])
 	for raw_id: Variant in consumed:
-		var ingredient_id: String = String(raw_id)
+		var ingredient_id: String = _SkillTree.resolve_skill_id(String(raw_id))
 		if ingredient_id.begins_with("stat_"):
 			# Stats = mejoras de tómbola (ej. Fatal Blow). Se conservan en Nv.5 para otras fusiones y bonuses.
 			continue
@@ -234,7 +301,7 @@ static func _ingredients_at_level_with_bonus(ingredients: Array, required_level:
 static func _get_ingredient_level(ingredient_id: String) -> int:
 	if ingredient_id.begins_with("stat_"):
 		return Global.get_run_stat_level(ingredient_id)
-	return Global.get_skill_level(ingredient_id)
+	return Global.get_skill_level(_SkillTree.resolve_skill_id(ingredient_id))
 
 
 static func _format_missing_requirements(recipe: Dictionary) -> String:
@@ -246,20 +313,33 @@ static func _format_missing_requirements(recipe: Dictionary) -> String:
 		var ingredient_id: String = String(raw_id)
 		if _get_ingredient_level(ingredient_id) >= FUSION_REQUIRED_LEVEL:
 			continue
-		labels.append("%s (%d/5)" % [_ingredient_display_name(ingredient_id), _get_ingredient_level(ingredient_id)])
+		var lvl: int = _get_ingredient_level(ingredient_id)
+		var suffix: String = " (fusionado)" if (
+			not ingredient_id.begins_with("stat_")
+			and Global.is_skill_disabled_for_combat(_SkillTree.resolve_skill_id(ingredient_id))
+			and lvl >= FUSION_REQUIRED_LEVEL
+		) else ""
+		labels.append("%s (%d/5)%s" % [_ingredient_display_name(ingredient_id), lvl, suffix])
 	var alt: Array = recipe.get("alt_ingredients", [])
 	if not alt.is_empty() and labels.is_empty():
 		for raw_id: Variant in alt:
 			var ingredient_id: String = String(raw_id)
 			if _get_ingredient_level(ingredient_id) >= FUSION_REQUIRED_LEVEL:
 				continue
-			labels.append("%s (%d/5)" % [_ingredient_display_name(ingredient_id), _get_ingredient_level(ingredient_id)])
+			var lvl: int = _get_ingredient_level(ingredient_id)
+			var suffix: String = " (fusionado)" if (
+				not ingredient_id.begins_with("stat_")
+				and Global.is_skill_disabled_for_combat(ingredient_id)
+				and lvl >= FUSION_REQUIRED_LEVEL
+			) else ""
+			labels.append("%s (%d/5)%s" % [_ingredient_display_name(ingredient_id), lvl, suffix])
 	return ", ".join(labels)
 
 
 static func _ingredient_display_name(ingredient_id: String) -> String:
-	if ingredient_id.begins_with("stat_"):
-		var stat_def: Dictionary = _RunStats.get_definition(ingredient_id)
-		return String(stat_def.get("title", ingredient_id))
-	var skill_def: Dictionary = _SkillTree.get_skill(ingredient_id)
-	return String(skill_def.get("display_name", ingredient_id))
+	var resolved_id: String = _SkillTree.resolve_skill_id(ingredient_id)
+	if resolved_id.begins_with("stat_"):
+		var stat_def: Dictionary = _RunStats.get_definition(resolved_id)
+		return String(stat_def.get("title", resolved_id))
+	var skill_def: Dictionary = _SkillTree.get_skill(resolved_id)
+	return String(skill_def.get("display_name", resolved_id))

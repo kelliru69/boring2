@@ -19,6 +19,7 @@ var _map_cards: Dictionary = {}
 
 
 func _ready() -> void:
+	PrepAccessButton.attach_to(self)
 	if ResourceLoader.exists(BACKGROUND_PATH):
 		background.texture = load(BACKGROUND_PATH) as Texture2D
 	_Theme.style_title(title_label, 26)

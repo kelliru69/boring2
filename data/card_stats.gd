@@ -6,6 +6,9 @@ const MAX_EQUIPPED: int = 5
 
 
 static func get_passive_stats(card_id: String) -> Dictionary:
+	if Global.is_plus_card(card_id):
+		var base_id: String = card_id.trim_suffix("_plus")
+		return _double_stats(get_passive_stats(base_id))
 	match card_id:
 		"carta_poring":
 			return {"max_hp_flat": 15, "defense_pct": 0.02}
@@ -65,6 +68,19 @@ static func get_passive_stats(card_id: String) -> Dictionary:
 			return {}
 
 
+static func _double_stats(stats: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	for key: Variant in stats:
+		var val: Variant = stats[key]
+		if val is int:
+			out[key] = int(val) * 2
+		elif val is float:
+			out[key] = float(val) * 2.0
+		else:
+			out[key] = val
+	return out
+
+
 static func get_effect_description(card_id: String) -> String:
 	var stats: Dictionary = get_passive_stats(card_id)
 	var parts: PackedStringArray = PackedStringArray()
@@ -88,7 +104,10 @@ static func get_effect_description(card_id: String) -> String:
 		parts.append("+%d%% robo de vida" % int(float(stats.lifesteal_pct) * 100.0))
 	if parts.is_empty():
 		return "Sin efectos pasivos conocidos."
-	return "Efectos al equipar:\n• " + "\n• ".join(parts)
+	var body: String = "Efectos al equipar:\n• " + "\n• ".join(parts)
+	if Global.is_plus_card(card_id):
+		return "Carta evolucionada (+) — stats duplicados.\n" + body
+	return body
 
 
 static func aggregate_equipped(card_ids: Array[String]) -> Dictionary:

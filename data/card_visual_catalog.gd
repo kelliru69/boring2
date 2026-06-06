@@ -15,6 +15,14 @@ static func _mob_id(card_id: String) -> String:
 
 
 static func get_album_art_paths(card_id: String) -> Array[String]:
+	if card_id.ends_with("_plus"):
+		var base_id: String = card_id.trim_suffix("_plus")
+		var paths: Array[String] = []
+		paths.append_array(get_album_art_paths(base_id))
+		var mob: String = _mob_id(card_id)
+		paths.append(ART_BASE + mob + "_card.png")
+		paths.append(ASSETS_CARD_BASE + mob + "_card.png")
+		return paths
 	var mob: String = _mob_id(card_id)
 	return [
 		ART_BASE + mob + "_card.png",

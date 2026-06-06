@@ -46,21 +46,22 @@ func setup(data: ClassData) -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	gui_input.connect(_on_gui_input)
 	mouse_entered.connect(_on_mouse_entered)
-	focus_entered.connect(_on_focus_entered)
+	mouse_exited.connect(_on_mouse_exited)
 
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		grab_focus()
 		_emit_focus()
 
 
 func _on_mouse_entered() -> void:
-	grab_focus()
+	var tw: Tween = create_tween()
+	tw.tween_property(self, "scale", Vector2(1.05, 1.05), 0.12)
 
 
-func _on_focus_entered() -> void:
-	_emit_focus()
+func _on_mouse_exited() -> void:
+	var tw: Tween = create_tween()
+	tw.tween_property(self, "scale", Vector2.ONE, 0.12)
 
 
 func _emit_focus() -> void:

@@ -6,18 +6,24 @@ const GROUP_ENEMIES: String = "Enemigos"
 const DEFAULT_ICON: String = "res://art/skills/default_icon.png"
 
 const INPUT_SPACE: String = "skill_space"
+const INPUT_Q: String = "skill_q"
+const INPUT_E: String = "skill_e"
 
 ## LMB/RMB se leen como InputEventMouseButton en ActiveSkillController.
 const SLOT_TO_INPUT: Dictionary = {
 	SkillTreeCatalog.SLOT_LMB: "",
 	SkillTreeCatalog.SLOT_RMB: "",
 	SkillTreeCatalog.SLOT_SPACE: INPUT_SPACE,
+	SkillTreeCatalog.SLOT_Q: INPUT_Q,
+	SkillTreeCatalog.SLOT_E: INPUT_E,
 }
 
 const SLOT_LABELS: Dictionary = {
 	SkillTreeCatalog.SLOT_LMB: "Clic IZQ",
 	SkillTreeCatalog.SLOT_RMB: "Clic DER",
 	SkillTreeCatalog.SLOT_SPACE: "Espacio",
+	SkillTreeCatalog.SLOT_Q: "Q",
+	SkillTreeCatalog.SLOT_E: "E",
 }
 
 const _VfxRegistry = preload("res://data/skill_vfx_registry.gd")

@@ -22,10 +22,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -290.0
-offset_right = 340.0
-offset_bottom = 290.0
+offset_left = -360.0
+offset_top = -300.0
+offset_right = 360.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -50,107 +50,144 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="Opciones" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
+[node name="Sonido" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 metadata/_tab_index = 0
 
-[node name="MasterRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="MasterRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Sonido"]
 layout_mode = 2
 
-[node name="MasterLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+[node name="MasterLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/MasterRow"]
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 text = "Volumen general"
 
-[node name="MasterSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+[node name="MasterSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/MasterRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 step = 1.0
 value = 100.0
 
-[node name="MasterValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/MasterRow"]
+[node name="MasterValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/MasterRow"]
 custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 text = "100%"
 horizontal_alignment = 2
 
-[node name="BgmRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="BgmRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Sonido"]
 layout_mode = 2
 
-[node name="BgmLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+[node name="BgmLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/BgmRow"]
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 text = "Música (BGM)"
 
-[node name="BgmSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+[node name="BgmSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/BgmRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 step = 1.0
 value = 55.0
 
-[node name="BgmValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/BgmRow"]
+[node name="BgmValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/BgmRow"]
 custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 text = "55%"
 horizontal_alignment = 2
 
-[node name="SfxRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="SfxRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Sonido"]
 layout_mode = 2
 
-[node name="SfxLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+[node name="SfxLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/SfxRow"]
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 text = "Efectos (SFX)"
 
-[node name="SfxSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+[node name="SfxSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/SfxRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 step = 1.0
 value = 70.0
 
-[node name="SfxValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones/SfxRow"]
+[node name="SfxValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Sonido/SfxRow"]
 custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 text = "70%"
 horizontal_alignment = 2
 
-[node name="GraphicsHeader" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="Graficos" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
+visible = false
 layout_mode = 2
-text = "Indicadores visuales"
+theme_override_constants/separation = 10
+metadata/_tab_index = 1
 
-[node name="TileGridCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="FullscreenCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Graficos"]
+layout_mode = 2
+text = "Pantalla completa"
+
+[node name="PixelFilterCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Graficos"]
+layout_mode = 2
+button_pressed = true
+text = "Filtro pixel (Nearest)"
+
+[node name="BrightnessRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Graficos"]
+layout_mode = 2
+
+[node name="BrightnessLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Graficos/BrightnessRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Brillo HUD"
+
+[node name="BrightnessSlider" type="HSlider" parent="PanelContainer/Margin/VBox/TabContainer/Graficos/BrightnessRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 50.0
+max_value = 150.0
+step = 1.0
+value = 100.0
+
+[node name="BrightnessValue" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Graficos/BrightnessRow"]
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="TileGridCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Graficos"]
 layout_mode = 2
 text = "Marco rojo en tiles (ratón)"
 button_pressed = true
 
-[node name="AimRingCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="AimRingCheck" type="CheckButton" parent="PanelContainer/Margin/VBox/TabContainer/Graficos"]
 layout_mode = 2
 text = "Aro de dirección de ataque"
 button_pressed = true
 
-[node name="BgmHintLabel" type="Label" parent="PanelContainer/Margin/VBox/TabContainer/Opciones"]
+[node name="Controles" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
+visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
-text = "BGM: assets/audio/"
-autowrap_mode = 2
+metadata/_tab_index = 2
 
-[node name="Habilidades" type="Control" parent="PanelContainer/Margin/VBox/TabContainer"]
+[node name="ControlsHost" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer/Controles"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Habilidades" type="VBoxContainer" parent="PanelContainer/Margin/VBox/TabContainer"]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-metadata/_tab_index = 1
+theme_override_constants/separation = 8
+metadata/_tab_index = 3
+
+[node name="KitButton" type="Button" parent="PanelContainer/Margin/VBox/TabContainer/Habilidades"]
+layout_mode = 2
+text = "Kit de combate (máx. 5 activas)"
 
 [node name="SkillTreeMenu" parent="PanelContainer/Margin/VBox/TabContainer/Habilidades" instance=ExtResource("2_tree")]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="ResumeButton" type="Button" parent="PanelContainer/Margin/VBox"]
 layout_mode = 2
@@ -158,7 +195,7 @@ text = "Continuar (ESC)"
 
 [node name="AbandonButton" type="Button" parent="PanelContainer/Margin/VBox"]
 layout_mode = 2
-text = "Abandonar partida"
+text = "Salir al Menú Principal"
 
 [node name="EscHint" type="Label" parent="PanelContainer/Margin/VBox"]
 layout_mode = 2

@@ -145,6 +145,11 @@ autowrap_mode = 2
 layout_mode = 2
 text = "Equipar carta"
 
+[node name="EvolveButton" type="Button" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox/DetailsColumn"]
+visible = false
+layout_mode = 2
+text = "Evolucionar"
+
 [node name="ArtColumn" type="VBoxContainer" parent="Margin/VBox/Body/InspectPanel/InspectMargin/InspectHBox"]
 layout_mode = 2
 size_flags_horizontal = 4

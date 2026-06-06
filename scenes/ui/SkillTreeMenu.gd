@@ -27,6 +27,7 @@ func _ready() -> void:
 
 func _refresh() -> void:
 	var tree_class: String = SkillTreeCatalog.resolve_tree_view_class_id()
+	Global.retry_pending_fusions()
 	class_label.text = "Clase: %s" % Global.current_class.capitalize()
 	points_label.text = "Mejoras de habilidad: %d" % Global.tombola_skill_upgrades_this_run
 	_rebuild_grid(tree_class)
@@ -68,10 +69,27 @@ func _on_skill_inspected(skill_id: String) -> void:
 	if def.is_empty():
 		return
 	var level: int = Global.get_skill_level(skill_id)
-	var extra: String = ""
 	if bool(def.get("is_fusion", false)):
-		extra = "\n[Fusión Job Change]"
-	elif Global.is_skill_disabled_for_combat(skill_id):
+		if level > 0:
+			detail_label.text = "%s — Nv.%d\n%s\n[Fusión activa]" % [
+				def.get("display_name", skill_id),
+				level,
+				def.get("description", ""),
+			]
+		else:
+			Global.retry_pending_fusions()
+			level = Global.get_skill_level(skill_id)
+			if level > 0:
+				_refresh()
+				return
+			detail_label.text = "%s\n%s\n\n%s" % [
+				def.get("display_name", skill_id),
+				def.get("description", ""),
+				_Fusion.describe_fusion_skill_status(skill_id),
+			]
+		return
+	var extra: String = ""
+	if Global.is_skill_disabled_for_combat(skill_id):
 		extra = "\n[Ingrediente fusionado — conservado Nv.%d, inactivo en combate]" % level
 	if level > 0:
 		detail_label.text = "%s — Nv.%d/%d%s\n%s" % [

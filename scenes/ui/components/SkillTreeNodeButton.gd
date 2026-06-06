@@ -5,6 +5,9 @@ signal skill_inspected(skill_id: String)
 
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
 const _SkillDefs = preload("res://data/skill_definitions.gd")
+const _Fusion = preload("res://data/job_fusion_catalog.gd")
+
+const DRAG_TYPE: String = "skill_kit_drag"
 
 var skill_id: String = ""
 
@@ -55,9 +58,10 @@ func refresh_state() -> void:
 		tooltip_text = "%s\n%s\n(Nivel obtenido vía tómbola)" % [def.get("display_name", ""), def.get("description", "")]
 	elif is_fusion:
 		modulate = Color(0.45, 0.42, 0.35, 0.85)
-		tooltip_text = "%s\n%s\nSe desbloquea al fusionar ingredientes Nv.5 (Job Change)." % [
+		tooltip_text = "%s\n%s\n%s" % [
 			def.get("display_name", ""),
 			def.get("description", ""),
+			_Fusion.describe_fusion_skill_status(skill_id),
 		]
 	elif tree_unlocked:
 		modulate = Color(0.82, 0.9, 1.0, 1.0)
@@ -74,3 +78,25 @@ func _on_pressed() -> void:
 	if skill_id.is_empty():
 		return
 	skill_inspected.emit(skill_id)
+
+
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if not _can_drag_skill():
+		return null
+	var preview := TextureRect.new()
+	preview.texture = _SkillDefs.get_icon_texture(skill_id)
+	preview.custom_minimum_size = Vector2(36, 36)
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	set_drag_preview(preview)
+	return {"type": DRAG_TYPE, "skill_id": skill_id, "from_slot": ""}
+
+
+func _can_drag_skill() -> bool:
+	if skill_id.is_empty():
+		return false
+	if Global.get_skill_level(skill_id) <= 0:
+		return false
+	if Global.is_skill_disabled_for_combat(skill_id):
+		return false
+	return SkillTreeCatalog.is_manual_slot_skill(skill_id)

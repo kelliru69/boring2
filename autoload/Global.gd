@@ -12,6 +12,8 @@ signal equipped_cards_changed
 signal run_cards_changed
 signal skill_tree_changed
 signal active_slots_changed
+signal combat_kit_changed
+signal consumables_changed
 signal job_change_ready(job_id: String)
 signal fusion_unlocked(fusion_id: String, display_name: String)
 signal dps_updated(dps_value: float)
@@ -25,6 +27,10 @@ const _RunStats = preload("res://data/run_stat_catalog.gd")
 const _MapConfig = preload("res://data/map_config.gd")
 const _SkinCatalog = preload("res://data/player_skin_catalog.gd")
 const _JobFusion = preload("res://data/job_fusion_catalog.gd")
+const _CombatKit = preload("res://scripts/combat/combat_kit_service.gd")
+const _Consumables = preload("res://scripts/inventory/consumable_inventory.gd")
+
+const CARD_EVOLVE_COST: int = 5
 
 ## Progreso de campaña (persistente entre runs).
 var map_1_cleared: bool = false
@@ -74,7 +80,15 @@ var active_skill_slots: Dictionary = {
 	SkillTreeCatalog.SLOT_LMB: "",
 	SkillTreeCatalog.SLOT_RMB: "",
 	SkillTreeCatalog.SLOT_SPACE: "",
+	SkillTreeCatalog.SLOT_Q: "",
+	SkillTreeCatalog.SLOT_E: "",
 }
+## Habilidades activas equipadas en combate (máx. 5).
+var combat_kit_skill_ids: Array[String] = []
+## Consumibles de la run: item_id → cantidad.
+var run_consumables: Dictionary = {}
+## Tecla 1–9 (string) → item_id.
+var consumable_hotkeys: Dictionary = {}
 var job_change_event_pending: bool = false
 ## Selección de menú arcade (Resources).
 var selected_character: CharacterData = null
@@ -98,6 +112,7 @@ func _ready() -> void:
 	_recalculate_xp_required()
 	_setup_run_clock_timer()
 	load_profile()
+	SkillInputRemap.load_bindings()
 
 
 func _setup_run_clock_timer() -> void:
@@ -219,7 +234,9 @@ func disable_skill_for_combat(skill_id: String) -> void:
 	for slot_id: String in _SkillTree.ALL_SLOT_IDS:
 		if String(active_skill_slots.get(slot_id, "")) == skill_id:
 			active_skill_slots[slot_id] = ""
+	_CombatKit.sync_from_active_slots()
 	active_slots_changed.emit()
+	combat_kit_changed.emit()
 
 
 func is_skill_disabled_for_combat(skill_id: String) -> bool:
@@ -277,7 +294,7 @@ func get_total_owned_card_copies() -> int:
 	return total
 
 
-func unlock_card(card_id: String, card_data: Dictionary = {}) -> void:
+func unlock_card(card_id: String, card_data: Dictionary = {}, track_run_drop: bool = true) -> void:
 	var data: Dictionary = card_data.duplicate()
 	if not data.has("id"):
 		data["id"] = card_id
@@ -289,9 +306,55 @@ func unlock_card(card_id: String, card_data: Dictionary = {}) -> void:
 	else:
 		data["count"] = 1
 	unlocked_cards[card_id] = data
-	add_run_card_drop(card_id)
+	if track_run_drop:
+		add_run_card_drop(card_id)
 	card_collected.emit(card_id, data)
 	save_profile()
+
+
+func get_plus_card_id(card_id: String) -> String:
+	if card_id.ends_with("_plus"):
+		return card_id
+	return "%s_plus" % card_id
+
+
+func is_plus_card(card_id: String) -> bool:
+	return card_id.ends_with("_plus")
+
+
+func can_evolve_card(card_id: String) -> bool:
+	if card_id.is_empty() or is_plus_card(card_id):
+		return false
+	return get_card_owned_count(card_id) >= CARD_EVOLVE_COST
+
+
+func evolve_card_to_plus(card_id: String) -> bool:
+	if not can_evolve_card(card_id):
+		return false
+	var data: Dictionary = unlocked_cards.get(card_id, {}).duplicate()
+	var base_name: String = String(data.get("name", card_id))
+	var new_count: int = maxi(int(data.get("count", 0)) - CARD_EVOLVE_COST, 0)
+	if new_count <= 0:
+		unlocked_cards.erase(card_id)
+	else:
+		data["count"] = new_count
+		unlocked_cards[card_id] = data
+	var plus_id: String = get_plus_card_id(card_id)
+	var display_name: String = base_name
+	if not display_name.ends_with("+"):
+		display_name = "%s+" % display_name
+	var plus_entry: Dictionary = {
+		"id": plus_id,
+		"tier": "plus",
+		"evolved_from": card_id,
+		"name": display_name,
+		"count": get_card_owned_count(plus_id) + 1,
+	}
+	unlocked_cards[plus_id] = plus_entry
+	card_collected.emit(plus_id, plus_entry)
+	equipped_cards_changed.emit()
+	save_profile()
+	return true
 
 
 func get_shop_purchase_count(upgrade_id: String) -> int:
@@ -311,8 +374,8 @@ func can_purchase_shop(upgrade_id: String) -> bool:
 	return get_shop_wallet_balance(upgrade_id) >= cost
 
 
-func can_decrease_shop(upgrade_id: String) -> bool:
-	return get_shop_purchase_count(upgrade_id) > 0
+func can_decrease_shop(_upgrade_id: String) -> bool:
+	return false
 
 
 func purchase_shop_upgrade(upgrade_id: String) -> bool:
@@ -490,6 +553,10 @@ func get_session_snapshot() -> Dictionary:
 		"zeny": total_zeny,
 		"run_zeny": run_zeny,
 		"cards_count": get_total_owned_card_copies(),
+		"run_card_drops": run_card_drops.duplicate(),
+		"run_consumables": run_consumables.duplicate(),
+		"class_id": current_class,
+		"map_id": Game.selected_map_id,
 	}
 
 
@@ -716,7 +783,12 @@ func init_run_skill_tree(class_id: String) -> void:
 		_SkillTree.SLOT_LMB: "",
 		_SkillTree.SLOT_RMB: "",
 		_SkillTree.SLOT_SPACE: "",
+		_SkillTree.SLOT_Q: "",
+		_SkillTree.SLOT_E: "",
 	}
+	_CombatKit.reset_for_new_run()
+	run_consumables.clear()
+	consumable_hotkeys.clear()
 	var starters: Dictionary = _SkillTree.get_starter_levels(class_id)
 	for skill_id: String in starters:
 		run_skill_levels[skill_id] = int(starters[skill_id])
@@ -759,7 +831,7 @@ func grant_skill_level(skill_id: String) -> bool:
 	run_skill_levels[skill_id] = current_level + 1
 	tombola_skill_upgrades_this_run += 1
 	if _SkillTree.is_manual_slot_skill(skill_id) and current_level == 0:
-		_auto_assign_active_slot(skill_id)
+		_CombatKit.auto_add_if_room(skill_id)
 	skill_tree_changed.emit()
 	_check_job_change_ready()
 	_check_pending_fusions()
@@ -786,21 +858,77 @@ func try_learn_skill(skill_id: String) -> bool:
 
 
 func assign_skill_to_slot(slot_id: String, skill_id: String) -> void:
+	if skill_id.is_empty():
+		clear_kit_slot(slot_id)
+	else:
+		assign_kit_slot(slot_id, skill_id)
+
+
+func get_kit_slot_assignment(slot_id: String) -> String:
 	if not _SkillTree.ALL_SLOT_IDS.has(slot_id):
-		return
-	if skill_id != "" and get_skill_level(skill_id) <= 0:
-		return
-	if skill_id != "" and not _SkillTree.is_manual_slot_skill(skill_id):
-		return
+		return ""
+	return String(active_skill_slots.get(slot_id, ""))
+
+
+## Asigna una habilidad manual a una ranura de input (LMB/RMB/Space/Q/E) y persiste en el kit.
+func assign_kit_slot(slot_id: String, skill_id: String) -> bool:
+	if not _SkillTree.ALL_SLOT_IDS.has(slot_id):
+		return false
+	if skill_id.is_empty():
+		return clear_kit_slot(slot_id)
+	if get_skill_level(skill_id) <= 0:
+		return false
+	if not _SkillTree.is_manual_slot_skill(skill_id):
+		return false
+	if is_skill_disabled_for_combat(skill_id):
+		return false
 	for other_slot: String in _SkillTree.ALL_SLOT_IDS:
-		if active_skill_slots.get(other_slot, "") == skill_id:
+		if String(active_skill_slots.get(other_slot, "")) == skill_id:
 			active_skill_slots[other_slot] = ""
 	active_skill_slots[slot_id] = skill_id
+	_CombatKit.sync_from_active_slots()
 	active_slots_changed.emit()
+	combat_kit_changed.emit()
+	return true
+
+
+func clear_kit_slot(slot_id: String) -> bool:
+	if not _SkillTree.ALL_SLOT_IDS.has(slot_id):
+		return false
+	if String(active_skill_slots.get(slot_id, "")).is_empty():
+		return false
+	active_skill_slots[slot_id] = ""
+	_CombatKit.sync_from_active_slots()
+	active_slots_changed.emit()
+	combat_kit_changed.emit()
+	return true
 
 
 func get_slot_skill(slot_id: String) -> String:
-	return String(active_skill_slots.get(slot_id, ""))
+	var skill_id: String = String(active_skill_slots.get(slot_id, ""))
+	if skill_id.is_empty():
+		return ""
+	if get_skill_level(skill_id) <= 0:
+		return ""
+	if is_skill_disabled_for_combat(skill_id):
+		return ""
+	return skill_id
+
+
+## Otorga una habilidad de fusión (Nv.1) antes de consumir ingredientes — transacción segura.
+func grant_fusion_skill(fusion_id: String) -> bool:
+	if fusion_id.is_empty():
+		return false
+	var def: Dictionary = _SkillTree.get_skill(fusion_id)
+	if def.is_empty() or not bool(def.get("is_fusion", false)):
+		return false
+	if get_skill_level(fusion_id) > 0:
+		return true
+	run_skill_levels[fusion_id] = 1
+	if _SkillTree.is_manual_slot_skill(fusion_id):
+		_CombatKit.auto_add_if_room(fusion_id)
+	skill_tree_changed.emit()
+	return true
 
 
 func get_skill_cooldown(skill_id: String) -> float:
@@ -970,7 +1098,9 @@ func _auto_assign_active_slot(skill_id: String) -> void:
 	for slot_id: String in _SkillTree.ALL_SLOT_IDS:
 		if String(active_skill_slots.get(slot_id, "")).is_empty():
 			active_skill_slots[slot_id] = skill_id
+			_CombatKit.sync_from_active_slots()
 			active_slots_changed.emit()
+			combat_kit_changed.emit()
 			return
 
 
@@ -1020,20 +1150,24 @@ func _check_pending_fusions() -> void:
 	_grant_available_fusions(current_class)
 
 
+## Reintenta fusiones pendientes (p. ej. al abrir el árbol de habilidades).
+func retry_pending_fusions() -> Array[String]:
+	if not _JobFusion.is_advanced_job(current_class):
+		return []
+	return _grant_available_fusions(current_class)
+
+
 func _grant_available_fusions(job_id: String) -> Array[String]:
 	if not _JobFusion.is_advanced_job(job_id):
 		return []
 	var granted: Array[String] = _JobFusion.try_apply_fusions(job_id)
-	if granted.is_empty():
-		return granted
 	for fusion_id: String in granted:
-		run_skill_levels[fusion_id] = 1
-		if _SkillTree.is_manual_slot_skill(fusion_id):
-			_auto_assign_active_slot(fusion_id)
 		var display_name: String = String(_SkillTree.get_skill(fusion_id).get("display_name", fusion_id))
 		fusion_unlocked.emit(fusion_id, display_name)
-	skill_tree_changed.emit()
-	active_slots_changed.emit()
+	if not granted.is_empty():
+		skill_tree_changed.emit()
+		active_slots_changed.emit()
+		combat_kit_changed.emit()
 	return granted
 
 
