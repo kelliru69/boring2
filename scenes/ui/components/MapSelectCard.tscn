@@ -1,0 +1,110 @@
+[gd_scene load_steps=2 format=3 uid="uid://map_select_card"]
+
+[ext_resource type="Script" path="res://scenes/ui/components/MapSelectCard.gd" id="1"]
+
+[node name="MapSelectCard" type="PanelContainer"]
+custom_minimum_size = Vector2(340, 400)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Preview" type="Control" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="BgTexture" type="TextureRect" parent="Margin/VBox/Preview"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BgTint" type="ColorRect" parent="Margin/VBox/Preview"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.04, 0.06, 0.1, 0.28)
+
+[node name="TitleLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Prontera Outskirts"
+
+[node name="DifficultyLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Dificultad: Fácil"
+
+[node name="DescLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+autowrap_mode = 3
+text = "Descripción del mapa."
+
+[node name="MobsRow" type="HBoxContainer" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="BossRow" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BossLabel" type="Label" parent="Margin/VBox/BossRow"]
+layout_mode = 2
+text = "Jefe:"
+
+[node name="BossSprite" type="TextureRect" parent="Margin/VBox/BossRow"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BossMystery" type="Label" parent="Margin/VBox/BossRow"]
+visible = false
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+text = "?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LockOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.02, 0.03, 0.06, 0.88)
+
+[node name="LockLabel" type="Label" parent="LockOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -16.0
+offset_right = 140.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "🔒 Bloqueado"
+horizontal_alignment = 1

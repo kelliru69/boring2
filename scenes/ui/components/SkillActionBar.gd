@@ -31,9 +31,11 @@ func _ready() -> void:
 		if slot.has_method("setup"):
 			slot.setup(slot_id)
 		_slots[slot_id] = slot
+	_refresh_all()
 
 
 func _refresh_all() -> void:
+	var any_visible: bool = false
 	for slot_id: String in _slots:
 		var ratio: float = 0.0
 		if _controller:
@@ -41,6 +43,9 @@ func _refresh_all() -> void:
 		var slot_node: PanelContainer = _slots[slot_id] as PanelContainer
 		if slot_node and slot_node.has_method("refresh_display"):
 			slot_node.refresh_display(ratio)
+		if slot_node and slot_node.visible:
+			any_visible = true
+	visible = any_visible
 
 
 func _on_slot_cooldown(slot_id: String, ratio: float) -> void:

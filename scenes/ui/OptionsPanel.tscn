@@ -99,7 +99,21 @@ custom_minimum_size = Vector2(44, 0)
 text = "70%"
 horizontal_alignment = 2
 
+[node name="WipeButton" type="Button" parent="PanelRoot/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.32, 1)
+text = "Borrar progreso"
+
 [node name="CloseButton" type="Button" parent="PanelRoot/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 text = "Cerrar"
+
+[node name="WipeConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "Restablecer datos"
+initial_position = 2
+size = Vector2i(480, 180)
+dialog_text = "¿Estás seguro de que deseas borrar todo tu progreso? Esta acción no se puede deshacer."
+ok_button_text = "Sí, borrar todo"
+cancel_button_text = "Cancelar"

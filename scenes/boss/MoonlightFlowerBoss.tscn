@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/boss/MoonlightFlowerBoss.gd" id="1_boss"]
+[ext_resource type="PackedScene" uid="uid://loot_pickup_rosurvivor" path="res://scenes/pickups/Loot.tscn" id="2_loot"]
+[ext_resource type="PackedScene" uid="uid://card_pickup_rosurvivor" path="res://scenes/pickups/CardPickup.tscn" id="3_card"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="4_proc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_moonlight"]
+radius = 34.0
+
+[node name="MoonlightFlowerBoss" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_boss")
+loot_scene = ExtResource("2_loot")
+card_drop_scene = ExtResource("3_card")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot"]
+script = ExtResource("4_proc")
+shape = 0
+fill_color = Color(0.92, 0.72, 1, 1)
+texture_size = 44
+display_scale = 1.25
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_moonlight")
+
+[node name="ContactDamageTimer" type="Timer" parent="."]
+wait_time = 0.62
+one_shot = true
+
+[node name="UI" type="Node2D" parent="."]
+position = Vector2(0, -68)
+
+[node name="HPBar" type="ProgressBar" parent="UI"]
+offset_left = -84.0
+offset_top = -8.0
+offset_right = 84.0
+offset_bottom = 5.0
+max_value = 13800.0
+value = 13800.0
+show_percentage = false
+

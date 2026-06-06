@@ -3,6 +3,7 @@ class_name SpriteAnimationLoader
 extends RefCounted
 
 const _TinyRpgFrames = preload("res://scripts/visual/tiny_rpg_sprite_frames.gd")
+const _Manifest = preload("res://data/monster_visual_manifest.gd")
 
 const MONSTER_BASE: String = "res://assets/sprites/monsters/"
 
@@ -19,15 +20,16 @@ static func try_setup_animated(
 	var frames_path: String = String(def.get("sprite_frames_path", ""))
 	if frames_path != "" and ResourceLoader.exists(frames_path):
 		return _play_sprite_frames(animated, static_sprite, load(frames_path) as SpriteFrames, def)
-	# 2) Carpeta con PNG numerados: monsters/poring/00.png, 01.png...
+	# 2) Carpeta con PNG numerados (manifest en export; DirAccess solo en editor)
 	var folder: String = String(def.get("walk_frames_folder", ""))
 	if folder.is_empty() and not monster_id.is_empty():
 		folder = MONSTER_BASE + monster_id + "/"
-	if folder != "":
-		var textures: Array[Texture2D] = _load_textures_from_folder(folder)
-		if textures.size() >= 2:
-			var built: SpriteFrames = _build_walk_frames(textures, def)
-			return _play_sprite_frames(animated, static_sprite, built, def)
+	var textures: Array[Texture2D] = _load_textures_from_manifest(monster_id)
+	if textures.size() < 2 and folder != "":
+		textures = _load_textures_from_folder(folder)
+	if textures.size() >= 2:
+		var built: SpriteFrames = _build_walk_frames(textures, def)
+		return _play_sprite_frames(animated, static_sprite, built, def)
 	# 3) Spritesheet en una sola imagen
 	var sheet_path: String = String(def.get("sprite_sheet_path", ""))
 	if sheet_path != "" and ResourceLoader.exists(sheet_path):
@@ -85,16 +87,17 @@ static func _apply_display_scale(
 	def: Dictionary
 ) -> void:
 	var target_h: float = float(def.get("sprite_height", 30.0))
+	var width_scale: float = float(def.get("sprite_width_scale", 1.0))
 	var tex: Texture2D = animated.sprite_frames.get_frame_texture(animated.animation, 0)
 	if tex == null:
 		return
 	var scale_factor: float = target_h / maxf(float(tex.get_height()), 1.0)
-	animated.scale = Vector2(scale_factor, scale_factor)
+	animated.scale = Vector2(scale_factor * maxf(width_scale, 0.05), scale_factor)
 	animated.centered = true
 	var tint: Color = def.get("tint", Color.WHITE)
 	animated.modulate = tint
 	if static_sprite:
-		static_sprite.scale = Vector2(scale_factor, scale_factor)
+		static_sprite.scale = Vector2(scale_factor * maxf(width_scale, 0.05), scale_factor)
 
 
 static func _build_walk_frames(textures: Array[Texture2D], def: Dictionary) -> SpriteFrames:
@@ -129,6 +132,19 @@ static func _build_from_sheet(
 			atlas.region = Rect2(col * frame_w, row * frame_h, frame_w, frame_h)
 			frames.add_frame(&"walk", atlas)
 	return frames
+
+
+static func _load_textures_from_manifest(monster_id: String) -> Array[Texture2D]:
+	var result: Array[Texture2D] = []
+	if monster_id.is_empty():
+		return result
+	for path: String in _Manifest.get_walk_frame_paths(monster_id):
+		if not ResourceLoader.exists(path):
+			continue
+		var tex: Texture2D = load(path) as Texture2D
+		if tex:
+			result.append(tex)
+	return result
 
 
 static func _load_textures_from_folder(folder_path: String) -> Array[Texture2D]:

@@ -4,9 +4,12 @@ extends PanelContainer
 signal chosen(upgrade_id: String)
 
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
+const _SkillDefs = preload("res://data/skill_definitions.gd")
 
 var _upgrade_id: String = ""
 
+@onready var _icon_frame: PanelContainer = $Margin/VBox/TopRow/IconFrame
+@onready var _icon: TextureRect = $Margin/VBox/TopRow/IconFrame/Icon
 @onready var _title: Label = $Margin/VBox/TitleLabel
 @onready var _desc: Label = $Margin/VBox/DescLabel
 @onready var _badge: Label = $Margin/VBox/BadgeLabel
@@ -15,6 +18,7 @@ var _upgrade_id: String = ""
 func _ready() -> void:
 	add_theme_stylebox_override(&"panel", _Theme.make_card_style(false))
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_Theme.pass_clicks_to_root(self)
 	gui_input.connect(_on_gui_input)
 	mouse_entered.connect(_on_hover_enter)
 	mouse_exited.connect(_on_hover_exit)
@@ -27,8 +31,22 @@ func setup(upgrade_id: String, title: String, description: String, level_hint: S
 	_desc.text = description
 	_badge.text = level_hint
 	_badge.visible = not level_hint.is_empty()
+	_set_icon(null)
 	_Theme.style_accent(_title, 16)
 	_Theme.style_body(_desc, 12)
+
+
+func set_skill_icon(skill_id: String) -> void:
+	if skill_id.is_empty():
+		_set_icon(null)
+		return
+	_set_icon(_SkillDefs.get_icon_texture(skill_id))
+
+
+func _set_icon(tex: Texture2D) -> void:
+	_icon.texture = tex
+	var has_icon: bool = tex != null
+	_icon_frame.visible = has_icon
 
 
 func _on_gui_input(event: InputEvent) -> void:

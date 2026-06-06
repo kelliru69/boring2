@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://spear_stab_slash_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/skills/SpearStabSlash.gd" id="1_spear"]
+
+[node name="SpearStabSlash" type="Node2D"]
+script = ExtResource("1_spear")

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://swordman_endure_aura"]
+
+[ext_resource type="Script" path="res://scenes/vfx/SwordmanEndureAura.gd" id="1_aura"]
+
+[node name="SwordmanEndureAura" type="Node2D"]
+z_index = 13
+script = ExtResource("1_aura")

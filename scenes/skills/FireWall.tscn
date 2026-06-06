@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scenes/skills/FireWall.gd" id="1_fw"]
 [ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="2_proc"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_fw"]
-radius = 20.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fw"]
+size = Vector2(32, 32)
 
 [node name="FireWall" type="Area2D"]
 collision_layer = 4
@@ -14,11 +14,12 @@ monitorable = false
 script = ExtResource("1_fw")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 script = ExtResource("2_proc")
 shape = 0
-fill_color = Color(1, 0.4, 0.1, 0.85)
+fill_color = Color(1, 0.75, 0.2, 0.85)
 texture_size = 28
 display_scale = 1.1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_fw")
+shape = SubResource("RectangleShape2D_fw")

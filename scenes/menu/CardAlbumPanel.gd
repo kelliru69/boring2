@@ -94,7 +94,7 @@ func _on_slot_toggled(toggled_on: bool, button: Button) -> void:
 func _equip_to_slot(slot_index: int) -> void:
 	if _inspected_card_id.is_empty():
 		return
-	if Global.is_card_equipped(_inspected_card_id) and Global.get_equipped_slot_for(_inspected_card_id) == slot_index:
+	if not Global.can_equip_card_to_slot(_inspected_card_id, slot_index):
 		return
 	Global.set_equipped_card(slot_index, _inspected_card_id)
 	_awaiting_slot_replace = false
@@ -106,7 +106,7 @@ func _equip_to_slot(slot_index: int) -> void:
 func _on_equip_pressed() -> void:
 	if _inspected_card_id.is_empty():
 		return
-	if Global.is_card_equipped(_inspected_card_id):
+	if Global.count_equipped_card(_inspected_card_id) >= Global.get_card_owned_count(_inspected_card_id):
 		return
 	Audio.play_ui_click()
 	if _active_slot >= 0:
@@ -138,15 +138,23 @@ func _show_inspection(card_id: String) -> void:
 	var saved: Dictionary = Global.unlocked_cards.get(card_id, {})
 	inspect_panel.visible = true
 	inspect_name.text = String(saved.get("name", def.get("name", card_id)))
-	inspect_subtitle.text = String(def.get("subtitle", ""))
+	var owned: int = Global.get_card_owned_count(card_id)
+	var equipped: int = Global.count_equipped_card(card_id)
+	var subtitle: String = String(def.get("subtitle", ""))
+	if owned > 1:
+		subtitle = "%s · Posees x%d" % [subtitle, owned] if not subtitle.is_empty() else "Posees x%d" % owned
+	inspect_subtitle.text = subtitle
 	inspect_effect.text = _CardStats.get_effect_description(card_id)
 	inspect_lore.text = String(def.get("lore", ""))
 	var tex: Texture2D = _Visuals.load_texture(card_id)
 	inspect_art.texture = tex
 	inspect_art.modulate = Color.WHITE if tex else Color(0.35, 0.55, 0.85, 0.35)
-	if Global.is_card_equipped(card_id):
-		equip_button.text = "Equipada (ranura %d)" % (Global.get_equipped_slot_for(card_id) + 1)
+	if equipped >= owned:
+		equip_button.text = "Todas equipadas (%d/%d)" % [equipped, owned]
 		equip_button.disabled = true
+	elif equipped > 0:
+		equip_button.text = "Equipar otra copia (%d/%d)" % [equipped, owned]
+		equip_button.disabled = false
 	else:
 		equip_button.text = "Equipar carta"
 		equip_button.disabled = false
@@ -154,6 +162,10 @@ func _show_inspection(card_id: String) -> void:
 
 
 func _refresh() -> void:
+	if album_label:
+		var types: int = Global.unlocked_cards.size()
+		var copies: int = Global.get_total_owned_card_copies()
+		album_label.text = "Álbum — %d copias (%d tipos)" % [copies, types]
 	_update_slot_buttons()
 	_rebuild_grid()
 	if _inspected_card_id != "" and Global.unlocked_cards.has(_inspected_card_id):
@@ -183,7 +195,8 @@ func _rebuild_grid() -> void:
 		var def: Dictionary = _Catalog.get_definition(card_id)
 		var entry: PanelContainer = _EntryScene.instantiate() as PanelContainer
 		card_grid.add_child(entry)
-		entry.setup(card_id, String(def.get("name", card_id)), discovered)
+		var owned_count: int = Global.get_card_owned_count(card_id) if discovered else 0
+		entry.setup(card_id, String(def.get("name", card_id)), discovered, owned_count)
 		entry.card_clicked.connect(_on_card_clicked)
 
 
@@ -210,8 +223,8 @@ func _update_equip_hint() -> void:
 	if _inspected_card_id.is_empty():
 		equip_hint.text = "Pulsa una carta desbloqueada para ver sus efectos."
 		return
-	if Global.is_card_equipped(_inspected_card_id):
-		equip_hint.text = "Esta carta ya está equipada."
+	if Global.count_equipped_card(_inspected_card_id) >= Global.get_card_owned_count(_inspected_card_id):
+		equip_hint.text = "Todas las copias de esta carta están equipadas."
 		return
 	if _awaiting_slot_replace:
 		equip_hint.text = "Todas las ranuras están llenas. Pulsa una ranura para reemplazar su carta."

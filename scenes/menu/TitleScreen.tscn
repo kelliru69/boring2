@@ -1,168 +1,149 @@
-[gd_scene load_steps=3 format=3 uid="uid://title_screen_rosurvivor"]
+[gd_scene load_steps=3 format=3 uid="uid://d4iqk4lqck8w4"]
 
+[ext_resource type="Script" uid="uid://dg2hir0pr2c6c" path="res://scenes/menu/TitleScreen.gd" id="1_title"]
+[ext_resource type="PackedScene" path="res://scenes/ui/OptionsPanel.tscn" id="2_opts"]
+[ext_resource type="PackedScene" path="res://scenes/menu/ScoreboardPanel.tscn" id="3_scoreboard"]
 
-
-[ext_resource type="Script" path="res://scenes/menu/TitleScreen.gd" id="1_title"]
-
-[ext_resource type="PackedScene" uid="uid://options_panel_rosurvivor" path="res://scenes/ui/OptionsPanel.tscn" id="2_opts"]
-
-
-
-[node name="TitleScreen" type="Control"]
-
+[node name="TitleScreen" type="Control" unique_id=369938593]
 layout_mode = 3
-
 anchors_preset = 15
-
 anchor_right = 1.0
-
 anchor_bottom = 1.0
-
 grow_horizontal = 2
-
 grow_vertical = 2
-
 script = ExtResource("1_title")
 
-
-
-[node name="Background" type="TextureRect" parent="."]
-
+[node name="Background" type="TextureRect" parent="." unique_id=743397737]
 layout_mode = 1
-
 anchors_preset = 15
-
 anchor_right = 1.0
-
 anchor_bottom = 1.0
-
 grow_horizontal = 2
-
 grow_vertical = 2
-
 expand_mode = 1
-
 stretch_mode = 6
 
-
-
-[node name="Overlay" type="ColorRect" parent="."]
-
+[node name="Overlay" type="ColorRect" parent="." unique_id=554040085]
 layout_mode = 1
-
 anchors_preset = 15
-
 anchor_right = 1.0
-
 anchor_bottom = 1.0
-
 grow_horizontal = 2
-
 grow_vertical = 2
-
 color = Color(0.02, 0.04, 0.08, 0.55)
 
-
-
-[node name="MenuPanel" type="PanelContainer" parent="."]
-
+[node name="MenuPanel" type="PanelContainer" parent="." unique_id=441135523]
 layout_mode = 1
-
 anchors_preset = 8
-
 anchor_left = 0.5
-
 anchor_top = 0.5
-
 anchor_right = 0.5
-
 anchor_bottom = 0.5
-
 offset_left = -240.0
-
-offset_top = -190.0
-
+offset_top = -210.0
 offset_right = 240.0
-
-offset_bottom = 190.0
-
+offset_bottom = 210.0
 grow_horizontal = 2
-
 grow_vertical = 2
 
-
-
-[node name="Margin" type="MarginContainer" parent="MenuPanel"]
-
+[node name="Margin" type="MarginContainer" parent="MenuPanel" unique_id=895383067]
 layout_mode = 2
-
 theme_override_constants/margin_left = 24
-
 theme_override_constants/margin_top = 20
-
 theme_override_constants/margin_right = 24
-
 theme_override_constants/margin_bottom = 20
 
-
-
-[node name="VBox" type="VBoxContainer" parent="MenuPanel/Margin"]
-
+[node name="VBox" type="VBoxContainer" parent="MenuPanel/Margin" unique_id=926765068]
 layout_mode = 2
-
 theme_override_constants/separation = 16
 
-
-
-[node name="TitleLabel" type="Label" parent="MenuPanel/Margin/VBox"]
-
+[node name="TitleLabel" type="Label" parent="MenuPanel/Margin/VBox" unique_id=1173368918]
 layout_mode = 2
-
 text = "boring"
-
 horizontal_alignment = 1
 
-
-
-[node name="SubtitleLabel" type="Label" parent="MenuPanel/Margin/VBox"]
-
+[node name="SubtitleLabel" type="Label" parent="MenuPanel/Margin/VBox" unique_id=1178554816]
 layout_mode = 2
-
 text = "test para kellinduras"
-
 horizontal_alignment = 1
 
-
-
-[node name="StartButton" type="Button" parent="MenuPanel/Margin/VBox"]
-
+[node name="StartButton" type="Button" parent="MenuPanel/Margin/VBox" unique_id=1268168956]
 custom_minimum_size = Vector2(0, 50)
-
 layout_mode = 2
-
 text = "Iniciar Partida"
 
-
-
-[node name="OptionsButton" type="Button" parent="MenuPanel/Margin/VBox"]
-
+[node name="ScoreboardButton" type="Button" parent="MenuPanel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 46)
-
 layout_mode = 2
+text = "Scoreboard"
 
+[node name="OptionsButton" type="Button" parent="MenuPanel/Margin/VBox" unique_id=1888621247]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
 text = "Opciones"
 
-
-
-[node name="QuitButton" type="Button" parent="MenuPanel/Margin/VBox"]
-
+[node name="QuitButton" type="Button" parent="MenuPanel/Margin/VBox" unique_id=7433132]
 custom_minimum_size = Vector2(0, 46)
-
 layout_mode = 2
-
 text = "Salir al Escritorio"
 
+[node name="UpdateBanner" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -78.0
+offset_right = 360.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
 
+[node name="Margin" type="MarginContainer" parent="UpdateBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
 
-[node name="OptionsPanel" parent="." instance=ExtResource("2_opts")]
+[node name="HBox" type="HBoxContainer" parent="UpdateBanner/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
 
+[node name="UpdateLabel" type="Label" parent="UpdateBanner/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hay una versión nueva disponible"
+autowrap_mode = 2
+
+[node name="DownloadButton" type="Button" parent="UpdateBanner/Margin/HBox"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "Descargar"
+
+[node name="DismissButton" type="Button" parent="UpdateBanner/Margin/HBox"]
+custom_minimum_size = Vector2(90, 36)
+layout_mode = 2
+text = "Ignorar"
+
+[node name="VersionLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -28.0
+offset_right = -12.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+horizontal_alignment = 2
+
+[node name="OptionsPanel" parent="." unique_id=1394543447 instance=ExtResource("2_opts")]
+
+[node name="ScoreboardPanel" parent="." instance=ExtResource("3_scoreboard")]

@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://vfxfiretr"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="FireTrail" type="GPUParticles2D"]
+amount = 22
+lifetime = 0.48
+explosiveness = 0.0
+randomness = 0.35
+fixed_fps = 30
+local_coords = false
+emitting = true
+script = ExtResource("1_vfx")
+vfx_preset = &"fire_trail"
+auto_free_when_finished = false

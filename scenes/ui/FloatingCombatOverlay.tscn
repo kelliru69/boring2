@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://floating_combat_overlay"]
+
+[ext_resource type="Script" path="res://scenes/ui/FloatingCombatOverlay.gd" id="1_overlay"]
+
+[node name="FloatingCombatOverlay" type="CanvasLayer"]
+follow_viewport_enabled = true
+layer = 12
+script = ExtResource("1_overlay")

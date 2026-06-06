@@ -16,9 +16,9 @@ script = ExtResource("1_lt")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 script = ExtResource("2_proc")
 shape = 0
-fill_color = Color(0.55, 0.85, 1, 1)
-texture_size = 12
-display_scale = 0.85
+fill_color = Color(0.904, 0.874, 0.644, 1)
+texture_size = 9
+display_scale = 0.6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_lt")

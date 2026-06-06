@@ -1,1 +1,3 @@
 # level_up.mp3, hit/hit_01.wav, ...
+
+# buff_pickup en sfx

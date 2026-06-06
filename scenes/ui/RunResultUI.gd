@@ -44,7 +44,8 @@ func _on_continue_pressed() -> void:
 		return
 	Audio.play_ui_click()
 	get_tree().paused = false
-	Game.continue_to_next_map()
+	visible = false
+	Game.go_to_post_boss_preparation()
 
 
 func _on_menu_pressed() -> void:

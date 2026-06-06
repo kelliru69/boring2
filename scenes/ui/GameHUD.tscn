@@ -1,8 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://gamehud_rosurvivor"]
+[gd_scene load_steps=9 format=3 uid="uid://gamehud_rosurvivor"]
 
 [ext_resource type="Script" path="res://scenes/ui/GameHUD.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scenes/ui/components/WallWaveWarningOverlay.gd" id="6_wall_warn"]
+[ext_resource type="Script" path="res://scenes/ui/components/BossHealthBarPanel.gd" id="7_boss_hp"]
 [ext_resource type="Script" path="res://scenes/ui/components/SkillActionBar.gd" id="2_skillbar"]
 [ext_resource type="Script" path="res://scenes/ui/components/PassiveSkillStrip.gd" id="3_passive"]
+[ext_resource type="Script" path="res://scenes/ui/components/BuffStatusOverlay.gd" id="4_buff"]
+[ext_resource type="PackedScene" uid="uid://run_hud_right_panel" path="res://scenes/ui/components/RunHudRightPanel.tscn" id="5_right"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_bg"]
 bg_color = Color(0.16, 0.17, 0.2, 0.95)
@@ -31,6 +35,7 @@ theme_override_constants/margin_bottom = 44
 layout_mode = 2
 
 [node name="LevelLabel" type="Label" parent="MarginContainer/VBox"]
+visible = false
 layout_mode = 2
 text = "Nivel: 1"
 
@@ -47,16 +52,40 @@ layout_mode = 2
 text = "Zeny: 0"
 
 [node name="CardsLabel" type="Label" parent="MarginContainer/VBox"]
+visible = false
 layout_mode = 2
 text = "Cartas: 0"
 
 [node name="TimeLabel" type="Label" parent="MarginContainer/VBox"]
+visible = false
 layout_mode = 2
 text = "Tiempo: 00:00"
 
 [node name="WaveLabel" type="Label" parent="MarginContainer/VBox"]
 layout_mode = 2
 text = "Oleada 1 | Enemigos: 0"
+
+[node name="RunPassiveLabel" type="Label" parent="MarginContainer/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.86, 1, 1)
+text = "Spell Pierce: 0%"
+
+[node name="EnergyCoatLabel" type="Label" parent="MarginContainer/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.8, 1, 1)
+text = "Energy Coat: 0 / 0"
+
+[node name="DpsLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.45, 1)
+text = "DPS (3s): 0"
+
+[node name="ClassLabel" type="Label" parent="MarginContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.9, 1, 1)
+text = "Clase: —"
 
 [node name="XpBarDock" type="Control" parent="."]
 layout_mode = 3
@@ -90,7 +119,7 @@ custom_minimum_size = Vector2(52, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
 theme_override_font_sizes/font_size = 14
-text = "Nv.1"
+text = "Lv.1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -140,7 +169,48 @@ alignment = 1
 theme_override_constants/separation = 8
 script = ExtResource("2_skillbar")
 
+[node name="NorthClockDock" type="MarginContainer" parent="."]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 48.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 10
+
+[node name="Center" type="CenterContainer" parent="NorthClockDock"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RunClockLabel" type="Label" parent="NorthClockDock/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.08, 0.12, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+text = "00:00"
+horizontal_alignment = 1
+
+[node name="RightHudDock" type="MarginContainer" parent="."]
+layout_mode = 3
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -196.0
+offset_top = 56.0
+offset_right = -12.0
+offset_bottom = -120.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 8
+
+[node name="RunHudRightPanel" parent="RightHudDock" instance=ExtResource("5_right")]
+layout_mode = 2
+
 [node name="PassiveSkillDock" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
@@ -162,3 +232,179 @@ grow_vertical = 2
 alignment = 2
 theme_override_constants/separation = 4
 script = ExtResource("3_passive")
+
+[node name="BuffOverlayDock" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -132.0
+offset_top = 72.0
+offset_right = -16.0
+offset_bottom = 132.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="BuffStatusOverlay" type="HBoxContainer" parent="BuffOverlayDock"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+theme_override_constants/separation = 6
+script = ExtResource("4_buff")
+
+[node name="MapExitOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="MapExitOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.04, 0.08, 0.35)
+
+[node name="Center" type="VBoxContainer" parent="MapExitOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -90.0
+offset_right = 220.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MapExitOverlay/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.88, 0.55, 1)
+theme_override_font_sizes/font_size = 28
+text = "SALIDA DEL MAPA"
+horizontal_alignment = 1
+
+[node name="CountdownLabel" type="Label" parent="MapExitOverlay/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.75, 1)
+theme_override_font_sizes/font_size = 96
+text = "30"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="MapExitOverlay/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+text = "Recolecta experiencia y botín"
+horizontal_alignment = 1
+
+[node name="BossWarningOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="BossWarningOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.18, 0.0, 0.0, 0.42)
+
+[node name="Center" type="CenterContainer" parent="BossWarningOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WarningLabel" type="Label" parent="BossWarningOverlay/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.18, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.35, 0.0, 0.0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 88
+text = "¡Cuidado!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WallWaveWarningOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_wall_warn")
+
+[node name="BossHealthBarPanel" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 48.0
+offset_right = 210.0
+offset_bottom = 106.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("7_boss_hp")
+
+[node name="VBox" type="VBoxContainer" parent="BossHealthBarPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 3
+
+[node name="NameLabel" type="Label" parent="BossHealthBarPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Jefe"
+horizontal_alignment = 1
+
+[node name="HpBar" type="ProgressBar" parent="BossHealthBarPanel/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="HpTextLabel" type="Label" parent="BossHealthBarPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 12
+text = "0 / 0"
+horizontal_alignment = 1

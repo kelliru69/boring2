@@ -12,7 +12,7 @@ radius = 28.0
 
 [node name="CreamyBoss" type="CharacterBody2D" unique_id=710144465]
 collision_layer = 2
-collision_mask = 0
+collision_mask = 3
 script = ExtResource("1_boss")
 cast_interval = 2.2
 cast_telegraph_scene = ExtResource("4_telegraph")

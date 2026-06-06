@@ -1,5 +1,7 @@
-## Telégrafo rojo: zona de impacto del casteo de Creamy.
+## Telégrafo rojo: zona de impacto del casteo de Creamy (outline negro).
 extends Area2D
+
+const _ThreatVfx = preload("res://scripts/vfx/enemy_threat_vfx.gd")
 
 @export var radius: float = 70.0
 @export var cast_duration: float = 2.0
@@ -26,12 +28,14 @@ func _ready() -> void:
 	monitoring = false
 	if collision_shape.shape is CircleShape2D:
 		(collision_shape.shape as CircleShape2D).radius = radius
+	_ThreatVfx.apply_ground_layer_z(self, global_position.y)
 	_find_player()
 	queue_redraw()
 
 
 func _process(delta: float) -> void:
 	_elapsed += delta
+	_ThreatVfx.apply_ground_layer_z(self, global_position.y)
 	queue_redraw()
 	if _elapsed >= cast_duration:
 		_resolve_impact()
@@ -49,9 +53,7 @@ func _resolve_impact() -> void:
 
 
 func _draw() -> void:
-	var alpha: float = 0.22 + sin(_elapsed * 8.0) * 0.08
-	draw_circle(Vector2.ZERO, radius, Color(1.0, 0.15, 0.1, alpha))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(1.0, 0.3, 0.2, alpha + 0.15), 2.0)
+	_ThreatVfx.draw_ground_telegraph(self, Vector2.ZERO, radius, _elapsed, cast_duration)
 
 
 func _find_player() -> void:

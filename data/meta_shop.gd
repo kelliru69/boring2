@@ -6,6 +6,9 @@ extends RefCounted
 const KIND_UNLOCK: String = "unlock"
 const KIND_STAT: String = "stat"
 
+const CURRENCY_STANDARD: String = "standard"
+const CURRENCY_CAMPAIGN: String = "campaign"
+
 # --- Desbloqueos (1 nivel máximo) ---
 const UNLOCK_REROLL: String = "unlock_reroll"
 const UNLOCK_ELIMINATE: String = "unlock_eliminate"
@@ -23,6 +26,13 @@ const UPGRADE_XP_GAIN: String = "xp_gain"
 const UPGRADE_FOOD_DROP: String = "food_drop"
 const UPGRADE_ZENY_GAIN: String = "zeny_gain"
 
+# --- Mejoras exclusivas (Zeny de Orc Village / mapa 3+) ---
+const UPGRADE_CAMPAIGN_VITALITY: String = "campaign_vitality"
+const UPGRADE_CAMPAIGN_MIGHT: String = "campaign_might"
+const UPGRADE_CAMPAIGN_BASTION: String = "campaign_bastion"
+const UPGRADE_CAMPAIGN_SWIFTNESS: String = "campaign_swiftness"
+const UPGRADE_CAMPAIGN_FORTUNE: String = "campaign_fortune"
+
 const UNLOCK_IDS: Array[String] = [UNLOCK_REROLL, UNLOCK_ELIMINATE]
 
 const STAT_IDS: Array[String] = [
@@ -39,13 +49,23 @@ const STAT_IDS: Array[String] = [
 	UPGRADE_ZENY_GAIN,
 ]
 
-const ALL_IDS: Array[String] = UNLOCK_IDS + STAT_IDS
+const CAMPAIGN_STAT_IDS: Array[String] = [
+	UPGRADE_CAMPAIGN_VITALITY,
+	UPGRADE_CAMPAIGN_MIGHT,
+	UPGRADE_CAMPAIGN_BASTION,
+	UPGRADE_CAMPAIGN_SWIFTNESS,
+	UPGRADE_CAMPAIGN_FORTUNE,
+]
+
+const ALL_IDS: Array[String] = UNLOCK_IDS + STAT_IDS + CAMPAIGN_STAT_IDS
 
 const REGEN_INTERVAL_SEC: float = 5.0
 const CRIT_DAMAGE_MULT: float = 1.5
 
 ## Referencia de economía Prontera (~15–20 min, victoria).
 const ESTIMATED_PRONTERA_RUN_ZENY: int = 14500
+## Referencia Orc Village (~20 min, victoria con Job Change).
+const ESTIMATED_ORC_VILLAGE_RUN_ZENY: int = 38000
 
 static var _DEFINITIONS: Dictionary = {
 	UNLOCK_REROLL: {
@@ -163,6 +183,56 @@ static var _DEFINITIONS: Dictionary = {
 		"cost_growth": 860,
 		"bonus_per_level": 0.20,
 	},
+	UPGRADE_CAMPAIGN_VITALITY: {
+		"kind": KIND_STAT,
+		"currency": CURRENCY_CAMPAIGN,
+		"title": "Vitalidad de campaña",
+		"description": "+8% PV máximos por nivel. Solo con Zeny de Orc Village en adelante.",
+		"max_level": 8,
+		"base_cost": 2800,
+		"cost_growth": 1200,
+		"bonus_per_level": 0.08,
+	},
+	UPGRADE_CAMPAIGN_MIGHT: {
+		"kind": KIND_STAT,
+		"currency": CURRENCY_CAMPAIGN,
+		"title": "Poder de campaña",
+		"description": "+10% daño por nivel. Solo con Zeny de Orc Village en adelante.",
+		"max_level": 8,
+		"base_cost": 3400,
+		"cost_growth": 1450,
+		"bonus_per_level": 0.10,
+	},
+	UPGRADE_CAMPAIGN_BASTION: {
+		"kind": KIND_STAT,
+		"currency": CURRENCY_CAMPAIGN,
+		"title": "Bastión de campaña",
+		"description": "+5% reducción de daño por nivel. Solo con Zeny de Orc Village en adelante.",
+		"max_level": 5,
+		"base_cost": 3000,
+		"cost_growth": 1250,
+		"bonus_per_level": 0.05,
+	},
+	UPGRADE_CAMPAIGN_SWIFTNESS: {
+		"kind": KIND_STAT,
+		"currency": CURRENCY_CAMPAIGN,
+		"title": "Celeridad de campaña",
+		"description": "+5% velocidad de ataque por nivel. Solo con Zeny de Orc Village en adelante.",
+		"max_level": 5,
+		"base_cost": 3200,
+		"cost_growth": 1300,
+		"bonus_per_level": 0.05,
+	},
+	UPGRADE_CAMPAIGN_FORTUNE: {
+		"kind": KIND_STAT,
+		"currency": CURRENCY_CAMPAIGN,
+		"title": "Fortuna de campaña",
+		"description": "+30% Zeny en mapas de campaña (Orc Village+) por nivel.",
+		"max_level": 5,
+		"base_cost": 3600,
+		"cost_growth": 1500,
+		"bonus_per_level": 0.30,
+	},
 }
 
 
@@ -188,6 +258,14 @@ static func get_cost(upgrade_id: String, current_level: int) -> int:
 
 static func is_unlock(upgrade_id: String) -> bool:
 	return String(get_definition(upgrade_id).get("kind", "")) == KIND_UNLOCK
+
+
+static func get_currency(upgrade_id: String) -> String:
+	return String(get_definition(upgrade_id).get("currency", CURRENCY_STANDARD))
+
+
+static func uses_campaign_currency(upgrade_id: String) -> bool:
+	return get_currency(upgrade_id) == CURRENCY_CAMPAIGN
 
 
 static func get_total_bonus(upgrade_id: String, level: int) -> float:
@@ -230,15 +308,23 @@ static func collect_run_bonuses(purchases: Dictionary) -> Dictionary:
 	var lv_xp: int = int(purchases.get(UPGRADE_XP_GAIN, 0))
 	var lv_food: int = int(purchases.get(UPGRADE_FOOD_DROP, 0))
 	var lv_zeny: int = int(purchases.get(UPGRADE_ZENY_GAIN, 0))
+	var lv_c_hp: int = int(purchases.get(UPGRADE_CAMPAIGN_VITALITY, 0))
+	var lv_c_atk: int = int(purchases.get(UPGRADE_CAMPAIGN_MIGHT, 0))
+	var lv_c_def: int = int(purchases.get(UPGRADE_CAMPAIGN_BASTION, 0))
+	var lv_c_as: int = int(purchases.get(UPGRADE_CAMPAIGN_SWIFTNESS, 0))
 	return {
-		"max_hp_mult": get_bonus_multiplier(UPGRADE_MAX_HP, lv_hp),
-		"attack_mult": get_bonus_multiplier(UPGRADE_ATTACK, lv_atk),
+		"max_hp_mult": get_bonus_multiplier(UPGRADE_MAX_HP, lv_hp) \
+			* get_bonus_multiplier(UPGRADE_CAMPAIGN_VITALITY, lv_c_hp),
+		"attack_mult": get_bonus_multiplier(UPGRADE_ATTACK, lv_atk) \
+			* get_bonus_multiplier(UPGRADE_CAMPAIGN_MIGHT, lv_c_atk),
 		"move_speed_mult": get_bonus_multiplier(UPGRADE_MOVE_SPEED, lv_move),
 		"crit_chance": get_total_bonus(UPGRADE_CRIT, lv_crit),
 		"pickup_range_mult": get_bonus_multiplier(UPGRADE_PICKUP_RANGE, lv_pickup),
-		"attack_speed_mult": get_bonus_multiplier(UPGRADE_ATTACK_SPEED, lv_as),
+		"attack_speed_mult": get_bonus_multiplier(UPGRADE_ATTACK_SPEED, lv_as) \
+			* get_bonus_multiplier(UPGRADE_CAMPAIGN_SWIFTNESS, lv_c_as),
 		"regen_hp_per_tick": 1 + lv_regen,
-		"defense_pct": get_total_bonus(UPGRADE_DEFENSE, lv_def),
+		"defense_pct": get_total_bonus(UPGRADE_DEFENSE, lv_def) \
+			+ get_total_bonus(UPGRADE_CAMPAIGN_BASTION, lv_c_def),
 		"xp_bonus": get_total_bonus(UPGRADE_XP_GAIN, lv_xp),
 		"food_drop_bonus": get_total_bonus(UPGRADE_FOOD_DROP, lv_food),
 		"zeny_bonus": get_total_bonus(UPGRADE_ZENY_GAIN, lv_zeny),

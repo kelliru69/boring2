@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://vfxsightwisp"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="SightWispLoop" type="GPUParticles2D"]
+amount = 16
+lifetime = 0.68
+explosiveness = 0.0
+randomness = 0.5
+fixed_fps = 30
+local_coords = true
+emitting = true
+script = ExtResource("1_vfx")
+vfx_preset = &"sight_wisp"
+auto_free_when_finished = false

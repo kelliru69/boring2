@@ -3,6 +3,7 @@ extends Control
 
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
 const _NodeScene: PackedScene = preload("res://scenes/ui/components/SkillTreeNodeButton.tscn")
+const _Fusion = preload("res://data/job_fusion_catalog.gd")
 
 @onready var points_label: Label = $VBox/Header/PointsLabel
 @onready var class_label: Label = $VBox/Header/ClassLabel
@@ -25,14 +26,15 @@ func _ready() -> void:
 
 
 func _refresh() -> void:
-	var tree_class: String = Global.base_class_id
-	if tree_class.is_empty():
-		tree_class = Game.selected_class_id
+	var tree_class: String = SkillTreeCatalog.resolve_tree_view_class_id()
 	class_label.text = "Clase: %s" % Global.current_class.capitalize()
 	points_label.text = "Mejoras de habilidad: %d" % Global.tombola_skill_upgrades_this_run
 	_rebuild_grid(tree_class)
 	_update_job_hint()
-	detail_label.text = "Sube de nivel para elegir mejoras en la tómbola. Toca un nodo para ver requisitos."
+	var hint: String = "Sube de nivel para elegir mejoras en la tómbola. Toca un nodo para ver requisitos."
+	if _Fusion.is_advanced_job(tree_class):
+		hint += "\n(Fusiones Job Change en la fila inferior del árbol.)"
+	detail_label.text = hint
 
 
 func _rebuild_grid(class_id: String) -> void:
@@ -43,8 +45,7 @@ func _rebuild_grid(class_id: String) -> void:
 	var skill_ids: Array[String] = SkillTreeCatalog.get_skills_for_class(class_id)
 	var cell_map: Dictionary = {}
 	for skill_id: String in skill_ids:
-		var def: Dictionary = SkillTreeCatalog.get_skill(skill_id)
-		var key: Vector2i = Vector2i(int(def.get("grid_col", 0)), int(def.get("grid_row", 0)))
+		var key: Vector2i = SkillTreeCatalog.get_skill_tree_grid_pos(skill_id)
 		cell_map[key] = skill_id
 	for row: int in grid_size.y:
 		for col: int in grid_size.x:
@@ -67,11 +68,17 @@ func _on_skill_inspected(skill_id: String) -> void:
 	if def.is_empty():
 		return
 	var level: int = Global.get_skill_level(skill_id)
+	var extra: String = ""
+	if bool(def.get("is_fusion", false)):
+		extra = "\n[Fusión Job Change]"
+	elif Global.is_skill_disabled_for_combat(skill_id):
+		extra = "\n[Ingrediente fusionado — conservado Nv.%d, inactivo en combate]" % level
 	if level > 0:
-		detail_label.text = "%s — Nv.%d/%d\n%s" % [
+		detail_label.text = "%s — Nv.%d/%d%s\n%s" % [
 			def.get("display_name", skill_id),
 			level,
 			int(def.get("max_level", SkillTreeCatalog.MAX_SKILL_LEVEL)),
+			extra,
 			def.get("description", ""),
 		]
 	elif Global.is_skill_unlocked(Global.base_class_id, skill_id):

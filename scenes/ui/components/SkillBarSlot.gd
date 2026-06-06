@@ -14,7 +14,7 @@ var slot_id: String = ""
 
 func _ready() -> void:
 	_Theme.apply_panel(self)
-	custom_minimum_size = Vector2(56, 68)
+	custom_minimum_size = Vector2(44, 54)
 
 
 func setup(p_slot_id: String) -> void:
@@ -30,10 +30,12 @@ func refresh_display(cooldown_ratio: float) -> void:
 	var skill_id: String = Global.get_slot_skill(slot_id)
 	var level: int = Global.get_skill_level(skill_id) if not skill_id.is_empty() else 0
 	if skill_id.is_empty() or level <= 0:
+		visible = false
 		_icon.texture = null
 		_icon.modulate = Color(0.25, 0.28, 0.32, 0.6)
 		_level_label.text = ""
 	else:
+		visible = true
 		_icon.texture = _SkillDefs.get_icon_texture(skill_id)
 		_icon.modulate = Color.WHITE
 		_level_label.text = str(level)

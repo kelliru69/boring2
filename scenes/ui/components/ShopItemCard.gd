@@ -36,7 +36,8 @@ func setup(
 	max_level: int,
 	cost: int,
 	can_buy: bool,
-	icon_tex: Texture2D = null
+	icon_tex: Texture2D = null,
+	uses_campaign_currency: bool = false
 ) -> void:
 	_upgrade_id = upgrade_id
 	_title.text = String(def.get("title", upgrade_id))
@@ -55,8 +56,14 @@ func setup(
 		_price.text = "MAX"
 		_Theme.style_subtitle(_price, 14)
 	else:
-		_price.text = "%d Z" % cost
-		_Theme.style_zeny(_price, 17)
+		if uses_campaign_currency:
+			_price.text = "%d Z⚔" % cost
+		else:
+			_price.text = "%d Z" % cost
+		if uses_campaign_currency:
+			_Theme.style_campaign_zeny(_price, 17)
+		else:
+			_Theme.style_zeny(_price, 17)
 	_buy_btn.text = "Comprar" if cost >= 0 else "Completo"
 	_buy_btn.disabled = not can_buy or cost < 0
 	_minus_btn.disabled = level <= 0

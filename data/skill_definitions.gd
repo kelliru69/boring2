@@ -20,6 +20,16 @@ const SLOT_LABELS: Dictionary = {
 	SkillTreeCatalog.SLOT_SPACE: "Espacio",
 }
 
+const _VfxRegistry = preload("res://data/skill_vfx_registry.gd")
+
+
+static func get_vfx_config(skill_id: String, role_key: String = "projectile") -> SkillVfxSheetConfig:
+	return _VfxRegistry.get_config(skill_id, role_key)
+
+
+static func has_vfx_config(skill_id: String, role_key: String = "projectile") -> bool:
+	return _VfxRegistry.has_config(skill_id, role_key)
+
 
 static func get_icon_texture(skill_id: String) -> Texture2D:
 	var path: String = String(SkillTreeCatalog.get_skill(skill_id).get("icon_path", DEFAULT_ICON))

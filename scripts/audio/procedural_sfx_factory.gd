@@ -8,6 +8,7 @@ const SAMPLE_RATE: int = 22050
 static func build_sfx_only() -> Dictionary:
 	return {
 		"fire_bolt": _fire_bolt(),
+		"fire_bolt_launch": _fire_bolt(),
 		"hit": _hit(),
 		"enemy_death": _enemy_death(),
 		"player_hurt": _player_hurt(),
@@ -15,6 +16,11 @@ static func build_sfx_only() -> Dictionary:
 		"zeny": _zeny(),
 		"card": _card_sparkle(),
 		"ui_click": _ui_click(),
+		"frost_diver_cast": _frost_diver_cast(),
+		"frost_diver_impact": _frost_diver_impact(),
+		"thunder_storm": _thunder_storm(),
+		"cold_impact": _cold_impact(),
+		"buff_pickup": _buff_pickup(),
 	}
 
 
@@ -75,8 +81,50 @@ static func _card_sparkle() -> AudioStream:
 	]))
 
 
+static func _buff_pickup() -> AudioStream:
+	return _to_wav(_mix([
+		_tone(659.25, 0.08, 0.26, true),
+		_tone(880.0, 0.1, 0.28, true),
+		_tone(1046.5, 0.14, 0.3, true),
+	]))
+
+
 static func _ui_click() -> AudioStream:
 	return _to_wav(_tone(660.0, 0.04, 0.2, true))
+
+
+static func _frost_diver_cast() -> AudioStream:
+	return _to_wav(_mix([
+		_tone(880.0, 0.06, 0.2, true),
+		_tone(1320.0, 0.08, 0.18, true),
+		_noise_burst(0.05, 0.08),
+	]))
+
+
+static func _frost_diver_impact() -> AudioStream:
+	return _to_wav(_mix([
+		_tone(1568.0, 0.04, 0.22, true),
+		_tone(2093.0, 0.06, 0.2, true),
+		_noise_burst(0.07, 0.18),
+		_tone(523.25, 0.1, 0.12, true),
+	]))
+
+
+static func _thunder_storm() -> AudioStream:
+	return _to_wav(_mix([
+		_noise_burst(0.14, 0.42),
+		_tone(110.0, 0.2, 0.35, false),
+		_tone(55.0, 0.28, 0.3, false),
+		_noise_burst(0.06, 0.25),
+	]))
+
+
+static func _cold_impact() -> AudioStream:
+	return _to_wav(_mix([
+		_tone(1760.0, 0.05, 0.24, true),
+		_noise_burst(0.05, 0.14),
+		_tone(2349.3, 0.07, 0.16, true),
+	]))
 
 
 static func _bgm_field() -> AudioStream:

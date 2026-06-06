@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://vfxelec001"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="ElectricRingBurst" type="GPUParticles2D"]
+amount = 28
+lifetime = 0.38
+one_shot = true
+explosiveness = 1.0
+randomness = 0.35
+fixed_fps = 30
+local_coords = true
+script = ExtResource("1_vfx")
+vfx_preset = &"electric_ring"

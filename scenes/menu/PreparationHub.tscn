@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://preparation_hub_rosurvivor"]
+[gd_scene load_steps=4 format=3 uid="uid://preparation_hub_rosurvivor"]
 
 [ext_resource type="Script" path="res://scenes/menu/PreparationHub.gd" id="1_hub"]
 [ext_resource type="PackedScene" uid="uid://zeny_shop_panel" path="res://scenes/menu/ZenyShopPanel.tscn" id="2_shop"]
 [ext_resource type="PackedScene" uid="uid://card_album_panel" path="res://scenes/menu/CardAlbumPanel.tscn" id="3_album"]
-[ext_resource type="PackedScene" uid="uid://run_setup_panel" path="res://scenes/menu/RunSetupPanel.tscn" id="4_run"]
 
 [node name="PreparationHub" type="Control"]
 layout_mode = 3
@@ -21,6 +20,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
@@ -31,52 +31,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.02, 0.04, 0.08, 0.65)
 
-[node name="TopBarPanel" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 52.0
-grow_horizontal = 2
-
-[node name="Margin" type="MarginContainer" parent="TopBarPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 6
-
-[node name="TopBar" type="HBoxContainer" parent="TopBarPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="BackButton" type="Button" parent="TopBarPanel/Margin/TopBar"]
-layout_mode = 2
-text = "← Título"
-
-[node name="ShopTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
-layout_mode = 2
-text = "Tienda Zeny"
-
-[node name="CardsTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
-layout_mode = 2
-text = "Cartas"
-
-[node name="RunTab" type="Button" parent="TopBarPanel/Margin/TopBar"]
-layout_mode = 2
-text = "Lanzar Run"
-
-[node name="Panels" type="Control" parent="."]
+[node name="OverlayPanels" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 56.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="ZenyShopPanel" parent="Panels" instance=ExtResource("2_shop")]
+[node name="ZenyShopPanel" parent="OverlayPanels" instance=ExtResource("2_shop")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -84,7 +51,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CardAlbumPanel" parent="Panels" instance=ExtResource("3_album")]
+[node name="CardAlbumPanel" parent="OverlayPanels" instance=ExtResource("3_album")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,10 +59,86 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="RunSetupPanel" parent="Panels" instance=ExtResource("4_run")]
+[node name="HubPanel" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -220.0
+offset_right = 360.0
+offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="HubPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="HubPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TitleLabel" type="Label" parent="HubPanel/Margin/VBox"]
+layout_mode = 2
+text = "Preparación"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="HubPanel/Margin/VBox"]
+layout_mode = 2
+text = "Mejora tu build"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ZenyLabel" type="Label" parent="HubPanel/Margin/VBox"]
+layout_mode = 2
+text = "Zeny: 0"
+horizontal_alignment = 1
+
+[node name="ActionsRow" type="HBoxContainer" parent="HubPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ShopButton" type="Button" parent="HubPanel/Margin/VBox/ActionsRow"]
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tienda de Zeny"
+
+[node name="CardsButton" type="Button" parent="HubPanel/Margin/VBox/ActionsRow"]
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Álbum de cartas"
+
+[node name="Footer" type="HBoxContainer" parent="HubPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BackButton" type="Button" parent="HubPanel/Margin/VBox/Footer"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "← Clase"
+
+[node name="ReadyButton" type="Button" parent="HubPanel/Margin/VBox/Footer"]
+custom_minimum_size = Vector2(260, 54)
+layout_mode = 2
+text = "¡LISTO!"
+
+[node name="OverlayBackButton" type="Button" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 200.0
+offset_bottom = 56.0
+text = "← Volver al hub"

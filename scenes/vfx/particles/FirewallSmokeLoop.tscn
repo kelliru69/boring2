@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://vfxfwsmk"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="FirewallSmokeLoop" type="GPUParticles2D"]
+amount = 24
+lifetime = 1.05
+explosiveness = 0.0
+randomness = 0.4
+fixed_fps = 28
+local_coords = true
+emitting = true
+script = ExtResource("1_vfx")
+vfx_preset = &"firewall_smoke"
+auto_free_when_finished = false

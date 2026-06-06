@@ -24,9 +24,13 @@ static func get_album_art_paths(card_id: String) -> Array[String]:
 
 
 static func get_pickup_sprite_paths(card_id: String) -> Array[String]:
+	var mob: String = _mob_id(card_id)
 	return [
 		ART_BASE + card_id + ".png",
 		PICKUP_BASE + card_id + ".png",
+		# Fallback: usar arte de álbum si no hay sprite pequeño de drop.
+		ASSETS_CARD_BASE + mob + "_card.png",
+		ART_BASE + mob + "_card.png",
 	]
 
 

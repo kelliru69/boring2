@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3 uid="uid://job_change_menu_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/ui/JobChangeMenu.gd" id="1_job"]
+
+[node name="JobChangeMenu" type="CanvasLayer"]
+layer = 25
+process_mode = 3
+script = ExtResource("1_job")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -220.0
+offset_right = 360.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+text = "Job Change"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+text = "Elige tu evolución."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ChoicesRow" type="HBoxContainer" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="FusionLabel" type="Label" parent="PanelContainer/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.82, 0.95, 1)
+autowrap_mode = 3
+text = "Fusiones..."

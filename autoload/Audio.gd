@@ -41,12 +41,52 @@ const PAYON_BGM_CANDIDATE_PATHS: Array[String] = [
 	"res://assets/audio/bgm_payon.wav",
 ]
 
+const ORC_VILLAGE_BGM_CANDIDATE_PATHS: Array[String] = [
+	"res://assets/audio/bgm_orc_village.ogg",
+	"res://assets/audio/bgm_orc_village.mp3",
+	"res://assets/audio/bgm_orc_village.wav",
+]
+
 const LEVEL_UP_CANDIDATE_PATHS: Array[String] = [
 	"res://audio/level_up.mp3",
 	"res://audio/level_up.ogg",
 	"res://audio/level_up.wav",
 	"res://assets/audio/level_up.mp3",
 ]
+
+const BUFF_PICKUP_CANDIDATE_PATHS: Array[String] = [
+	"res://audio/sfx/buff_pickup.mp3",
+	"res://audio/sfx/buff_pickup.ogg",
+	"res://audio/sfx/buff_pickup.wav",
+	"res://assets/audio/sfx/buff_pickup.mp3",
+]
+
+## SFX del Mage: se cargan desde disco si existen; si no, quedan los procedurales.
+const MAGE_SFX_CANDIDATES: Dictionary = {
+	"frost_diver_cast": [
+		"res://audio/sfx/frost_diver_cast.mp3",
+		"res://audio/sfx/frost_diver.mp3",
+		"res://assets/audio/sfx/frost_diver_cast.mp3",
+	],
+	"frost_diver_impact": [
+		"res://audio/sfx/frost_diver_impact.mp3",
+		"res://audio/sfx/frost_diver_hit.mp3",
+		"res://assets/audio/sfx/frost_diver_impact.mp3",
+	],
+	"thunder_storm": [
+		"res://audio/sfx/thunder_storm.mp3",
+		"res://audio/sfx/thunderstorm.mp3",
+		"res://assets/audio/sfx/thunder_storm.mp3",
+	],
+	"cold_impact": [
+		"res://audio/sfx/cold_impact.mp3",
+		"res://assets/audio/sfx/cold_impact.mp3",
+	],
+	"fire_bolt_launch": [
+		"res://audio/sfx/fire_bolt.mp3",
+		"res://assets/audio/sfx/fire_bolt.mp3",
+	],
+}
 
 
 func _ready() -> void:
@@ -55,6 +95,8 @@ func _ready() -> void:
 	_load_volume_settings()
 	_apply_bus_volumes_from_settings()
 	_streams = _SfxFactory.build_sfx_only()
+	_merge_mage_sfx_from_disk()
+	_merge_buff_pickup_sfx_from_disk()
 	_setup_players()
 	_connect_game_signals()
 	call_deferred("play_menu_bgm")
@@ -130,19 +172,35 @@ func play_menu_bgm() -> void:
 
 
 func play_map_bgm(map_id: String) -> void:
-	var path: String = _MapConfig.get_bgm_path(map_id)
+	var path: String = _resolve_map_bgm_path(map_id)
 	var fallbacks: Array[String] = BGM_CANDIDATE_PATHS
 	if map_id == _MapConfig.MAP_PAYON:
 		fallbacks = PAYON_BGM_CANDIDATE_PATHS + BGM_CANDIDATE_PATHS
-	if path.is_empty() or not ResourceLoader.exists(path):
+	elif map_id == _MapConfig.MAP_ORC_VILLAGE:
+		fallbacks = ORC_VILLAGE_BGM_CANDIDATE_PATHS + PAYON_BGM_CANDIDATE_PATHS + BGM_CANDIDATE_PATHS
+	if path.is_empty():
 		path = _find_first_existing(fallbacks)
 	_start_bgm_from_path(path, fallbacks)
 
 
-func _find_first_existing(paths: Array[String]) -> String:
-	for p: String in paths:
-		if ResourceLoader.exists(p):
-			return p
+func _resolve_map_bgm_path(map_id: String) -> String:
+	var configured: String = _MapConfig.get_bgm_path(map_id)
+	if configured != "" and ResourceLoader.exists(configured):
+		return configured
+	var stem: String = configured.get_basename()
+	if stem.is_empty():
+		return ""
+	for ext: String in [".ogg", ".mp3", ".wav"]:
+		var alt: String = stem + ext
+		if ResourceLoader.exists(alt):
+			return alt
+	return ""
+
+
+func _find_first_existing(paths: Array) -> String:
+	for item: Variant in paths:
+		if item is String and ResourceLoader.exists(item):
+			return item as String
 	return ""
 
 
@@ -195,6 +253,31 @@ func play_sfx(stream_name: String, pitch_scale: float = 1.0) -> void:
 	player.pitch_scale = pitch_scale
 	player.volume_db = 0.0
 	player.play()
+
+
+## Variación sutil de pitch (0.9–1.1) para reducir fatiga auditiva.
+func play_sfx_varied(stream_name: String, pitch_min: float = 0.9, pitch_max: float = 1.1) -> void:
+	play_sfx(stream_name, randf_range(pitch_min, pitch_max))
+
+
+func _merge_mage_sfx_from_disk() -> void:
+	for stream_name: String in MAGE_SFX_CANDIDATES:
+		var candidates: Array = MAGE_SFX_CANDIDATES[stream_name]
+		var path: String = _find_first_existing(candidates)
+		if path.is_empty():
+			continue
+		var loaded: AudioStream = load(path) as AudioStream
+		if loaded != null:
+			_streams[stream_name] = loaded
+
+
+func _merge_buff_pickup_sfx_from_disk() -> void:
+	var path: String = _find_first_existing(BUFF_PICKUP_CANDIDATE_PATHS)
+	if path.is_empty():
+		return
+	var loaded: AudioStream = load(path) as AudioStream
+	if loaded != null:
+		_streams["buff_pickup"] = loaded
 
 
 func set_master_volume(value: float) -> void:

@@ -1,8 +1,9 @@
-## Jefe final Payon: Osiris — persecución rápida y explosiones en área.
+## Escena legada (no usada en run). Jefe de Payon: MoonlightFlowerBoss.
 class_name OsirisBoss
 extends Enemy
 
 signal defeated
+signal boss_health_changed(current_hp: int, max_hp: int)
 
 const _MapConfig = preload("res://data/map_config.gd")
 
@@ -65,19 +66,26 @@ func _cast_area_burst() -> void:
 		telegraph.configure(aoe_radius, 1.6, aoe_damage)
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, hit_element: StringName = EnemyHitFlash.ELEMENT_DEFAULT) -> void:
 	if amount <= 0:
 		return
-	var parent: Node = get_tree().current_scene
-	if parent:
-		var dmg_script = preload("res://scenes/ui/DamageNumber.gd")
-		dmg_script.spawn(global_position, amount, parent)
+	if Arena.is_ready() and not Arena.can_damage_enemy_at(global_position):
+		return
+	if _is_damage_number_visible():
+		var parent: Node = get_tree().current_scene
+		if parent:
+			_DamageNumber.spawn(global_position, amount, parent)
 	current_hp = maxi(current_hp - amount, 0)
 	if hp_bar:
 		hp_bar.value = current_hp
-	_flash_damage_feedback()
+	_emit_boss_health()
+	_flash_damage_feedback(hit_element)
 	if current_hp <= 0:
 		die()
+
+
+func _emit_boss_health() -> void:
+	boss_health_changed.emit(current_hp, max_hp)
 
 
 func die() -> void:

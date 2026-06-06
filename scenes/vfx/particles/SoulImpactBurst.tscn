@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b3wgqky8sovj0"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="SoulImpactBurst" type="GPUParticles2D"]
+amount = 24
+lifetime = 0.28
+one_shot = true
+explosiveness = 1.0
+randomness = 0.4
+fixed_fps = 30
+local_coords = true
+emitting = false
+script = ExtResource("1_vfx")
+vfx_preset = &"soul_impact"
+auto_free_when_finished = true

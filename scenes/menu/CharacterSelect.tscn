@@ -1,0 +1,177 @@
+[gd_scene load_steps=2 format=3 uid="uid://character_select_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/menu/CharacterSelect.gd" id="1"]
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.04, 0.08, 0.35)
+
+[node name="RootMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -72.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="MainHBox" type="HBoxContainer" parent="RootMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PreviewHBox" type="HBoxContainer" parent="RootMargin/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.15
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="SplashHolder" type="Control" parent="RootMargin/MainHBox/PreviewHBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="SplashRect" type="TextureRect" parent="RootMargin/MainHBox/PreviewHBox/SplashHolder"]
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 480.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SplashFade" type="ColorRect" parent="RootMargin/MainHBox/PreviewHBox/SplashHolder"]
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 480.0
+mouse_filter = 2
+color = Color(0.02, 0.05, 0.1, 1)
+
+[node name="SpriteColumn" type="VBoxContainer" parent="RootMargin/MainHBox/PreviewHBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SpriteHost" type="Control" parent="RootMargin/MainHBox/PreviewHBox/SpriteColumn"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MenuSprite" type="AnimatedSprite2D" parent="RootMargin/MainHBox/PreviewHBox/SpriteColumn/SpriteHost"]
+z_index = 2
+centered = true
+position = Vector2(60, 72)
+
+[node name="PreviewName" type="Label" parent="RootMargin/MainHBox/PreviewHBox/SpriteColumn"]
+layout_mode = 2
+mouse_filter = 2
+text = "Hero"
+horizontal_alignment = 1
+
+[node name="RightPanel" type="PanelContainer" parent="RootMargin/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="RightMargin" type="MarginContainer" parent="RootMargin/MainHBox/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="RightVBox" type="VBoxContainer" parent="RootMargin/MainHBox/RightPanel/RightMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="RootMargin/MainHBox/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+text = "SELECT YOUR AVATAR"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="RootMargin/MainHBox/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+text = "..."
+horizontal_alignment = 1
+
+[node name="GridScroll" type="ScrollContainer" parent="RootMargin/MainHBox/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
+
+[node name="CharacterGrid" type="GridContainer" parent="RootMargin/MainHBox/RightPanel/RightMargin/RightVBox/GridScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="ActionBarLayer" type="PanelContainer" parent="."]
+z_index = 20
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -68.0
+offset_right = -16.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 0
+
+[node name="ActionBar" type="HBoxContainer" parent="ActionBarLayer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 2
+
+[node name="BackButton" type="Button" parent="ActionBarLayer/ActionBar"]
+custom_minimum_size = Vector2(160, 48)
+layout_mode = 2
+focus_mode = 2
+text = "Volver"
+
+[node name="ActionSpacer" type="Control" parent="ActionBarLayer/ActionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ConfirmButton" type="Button" parent="ActionBarLayer/ActionBar"]
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2
+focus_mode = 2
+text = "CONTINUAR"

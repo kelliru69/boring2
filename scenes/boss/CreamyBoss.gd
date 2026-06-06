@@ -3,6 +3,7 @@ class_name CreamyBoss
 extends Enemy
 
 signal defeated
+signal boss_health_changed(current_hp: int, max_hp: int)
 
 const DIFFICULTY_MULT: float = 10.0
 const DAMAGE_SCALE: float = 0.2
@@ -93,6 +94,7 @@ func _physics_process(delta: float) -> void:
 		BossState.CASTING:
 			_process_casting(delta)
 	_update_motion_visuals(Vector2.ZERO, delta)
+	_update_tile_depth_sort()
 
 
 func _process_bullet_timers(delta: float) -> void:
@@ -191,17 +193,26 @@ func _clear_telegraph() -> void:
 	_active_telegraph = null
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, hit_element: StringName = EnemyHitFlash.ELEMENT_DEFAULT) -> void:
 	if amount <= 0:
 		return
 	if Arena.is_ready() and not Arena.can_damage_enemy_at(global_position):
 		return
+	if _is_damage_number_visible():
+		var parent: Node = get_tree().current_scene
+		if parent:
+			_DamageNumber.spawn(global_position, amount, parent)
 	current_hp = maxi(current_hp - amount, 0)
 	if hp_bar:
 		hp_bar.value = current_hp
-	_flash_damage_feedback()
+	_emit_boss_health()
+	_flash_damage_feedback(hit_element)
 	if current_hp <= 0:
 		die()
+
+
+func _emit_boss_health() -> void:
+	boss_health_changed.emit(current_hp, max_hp)
 
 
 func die() -> void:
@@ -209,6 +220,5 @@ func die() -> void:
 	Audio.play_sfx("enemy_death", randf_range(0.85, 1.0))
 	_try_drop_card()
 	_spawn_loot_drops()
-	Loot.vacuum_all_on_map(get_tree())
 	defeated.emit()
 	queue_free()

@@ -13,6 +13,7 @@ var _selected: bool = false
 
 @onready var _thumb: TextureRect = $Margin/VBox/ThumbFrame/Thumb
 @onready var _lock: Label = $Margin/VBox/ThumbFrame/LockOverlay
+@onready var _count_badge: Label = $Margin/VBox/ThumbFrame/CountBadge
 @onready var _name_label: Label = $Margin/VBox/NameLabel
 
 
@@ -21,15 +22,19 @@ func _ready() -> void:
 	custom_minimum_size = Vector2(108, 148)
 	_Theme.style_subtitle(_name_label, 11)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_Theme.pass_clicks_to_root(self)
 	gui_input.connect(_on_gui_input)
 	mouse_entered.connect(_on_hover_enter)
 	mouse_exited.connect(_on_hover_exit)
 
 
-func setup(card_id: String, display_name: String, discovered: bool) -> void:
+func setup(card_id: String, display_name: String, discovered: bool, owned_count: int = 0) -> void:
 	_card_id = card_id
 	_discovered = discovered
 	_name_label.text = display_name if discovered else "???"
+	if _count_badge:
+		_count_badge.visible = discovered and owned_count > 1
+		_count_badge.text = "x%d" % owned_count if owned_count > 1 else ""
 	if discovered:
 		var tex: Texture2D = _Visuals.load_texture(card_id)
 		if tex:

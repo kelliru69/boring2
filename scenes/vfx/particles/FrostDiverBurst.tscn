@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dg5v0yaijx4gd"]
+
+[ext_resource type="Script" path="res://scenes/vfx/particles/VfxParticles.gd" id="1_vfx"]
+
+[node name="FrostDiverBurst" type="GPUParticles2D"]
+amount = 40
+lifetime = 0.62
+one_shot = true
+explosiveness = 1.0
+randomness = 0.5
+fixed_fps = 30
+local_coords = true
+emitting = false
+script = ExtResource("1_vfx")
+vfx_preset = &"frost_shatter"
+auto_free_when_finished = true

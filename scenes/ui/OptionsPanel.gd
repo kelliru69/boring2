@@ -2,6 +2,7 @@
 extends CanvasLayer
 
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
+const _MenuEsc = preload("res://scripts/ui/menu_esc_handler.gd")
 
 const BUS_MUSIC: StringName = &"Music"
 const BUS_SFX: StringName = &"SFX"
@@ -12,7 +13,9 @@ const BUS_SFX: StringName = &"SFX"
 @onready var music_value: Label = $PanelRoot/Panel/Margin/VBox/MusicRow/MusicHBox/MusicValue
 @onready var sfx_slider: HSlider = $PanelRoot/Panel/Margin/VBox/SfxRow/SfxHBox/SfxSlider
 @onready var sfx_value: Label = $PanelRoot/Panel/Margin/VBox/SfxRow/SfxHBox/SfxValue
+@onready var wipe_button: Button = $PanelRoot/Panel/Margin/VBox/WipeButton
 @onready var close_button: Button = $PanelRoot/Panel/Margin/VBox/CloseButton
+@onready var wipe_confirm: ConfirmationDialog = $WipeConfirmDialog
 
 
 func _ready() -> void:
@@ -36,7 +39,19 @@ func _ready() -> void:
 	music_slider.value_changed.connect(_on_music_changed)
 	sfx_slider.value_changed.connect(_on_sfx_changed)
 	close_button.pressed.connect(hide_options)
+	if wipe_button:
+		_Theme.apply_button(wipe_button, 44.0)
+		wipe_button.pressed.connect(_on_wipe_pressed)
+	if wipe_confirm:
+		wipe_confirm.confirmed.connect(_on_wipe_confirmed)
 	dimmer.gui_input.connect(_on_dimmer_input)
+	set_process_unhandled_input(true)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and _MenuEsc.is_back_pressed(event):
+		hide_options()
+		_MenuEsc.mark_input_handled(self)
 
 
 func show_options() -> void:
@@ -95,3 +110,17 @@ func _set_bus_linear_percent(bus_name: StringName, percent: float) -> void:
 func _on_dimmer_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		hide_options()
+
+
+func _on_wipe_pressed() -> void:
+	Audio.play_ui_click()
+	if wipe_confirm:
+		wipe_confirm.popup_centered()
+
+
+func _on_wipe_confirmed() -> void:
+	Audio.play_ui_click()
+	Global.wipe_all_progress()
+	Game.intermap_preparation_mode = false
+	hide_options()
+	Game.go_to_title()

@@ -8,8 +8,17 @@ const ALL_CARD_IDS: Array[String] = [
 	"carta_fabre",
 	"carta_zombie",
 	"carta_skeleton",
+	"carta_archer_skeleton",
+	"carta_familiar",
+	"carta_rocker",
 	"carta_creamy",
-	"carta_osiris",
+	"carta_moonlight_flower",
+	"carta_orc_baby",
+	"carta_orc_warrior",
+	"carta_orc_lady",
+	"carta_orc_archer",
+	"carta_high_orc",
+	"carta_orc_hero",
 ]
 
 
@@ -25,10 +34,28 @@ static func get_definition(card_id: String) -> Dictionary:
 			return _def("Zombie", "No-muerto lento pero implacable. Absorbe parte del daño recibido.", "Payon y mapas oscuros.")
 		"carta_skeleton":
 			return _def("Esqueleto", "Guerrero óseo. Aumenta tu poder ofensivo y cadencia.", "Enemigo de dungeon.")
+		"carta_archer_skeleton":
+			return _def("Archer Skeleton", "Arquero no-muerto de precisión mortal. Potencia daño y alcance efectivo.", "Aparece en Payon (5:00+).")
+		"carta_familiar":
+			return _def("Familiar", "Espíritu veloz de Payon. Potencia movilidad y presión ofensiva.", "Aparece en el segundo mapa.")
+		"carta_rocker":
+			return _def("Rocker", "Bestia saltarina de impacto brutal. Mejora burst y control de espacio.", "Aparece en Prontera (5:00+).")
 		"carta_creamy":
-			return _def("Creamy", "Hadita errante. Velocidad y evasión mejoradas.", "Jefe de Prontera Fields.")
-		"carta_osiris":
-			return _def("Osiris", "Señor de la muerte. Bonificaciones élite a ATK, HP y DEF.", "Jefe final de Payon Dungeon.")
+			return _def("Creamy", "Hadita errante legendaria. Buff extremo para runs avanzadas.", "Drop ultrarraro de jefe.")
+		"carta_moonlight_flower":
+			return _def("Moonlight Flower", "Aura mística abrumadora. Poder descomunal en ofensiva y supervivencia.", "Drop ultrarraro del jefe final de Payon.")
+		"carta_orc_baby":
+			return _def("Orc Baby", "Cría orca ágil. Impulso temprano de velocidad y EXP en la run.", "Orc Village — horda inicial — drop 0.05%.")
+		"carta_orc_warrior":
+			return _def("Orc Warrior", "Guerrero orco resistente. Mejora defensa y daño cuerpo a cuerpo.", "Orc Village — drop 0.05%.")
+		"carta_orc_lady":
+			return _def("Orc Lady", "Velocidad de horda. Más movimiento y críticos.", "Orc Village — drop 0.05%.")
+		"carta_orc_archer":
+			return _def("Orc Archer", "Precisión a distancia. Alcance y recarga.", "Orc Village — drop 0.05%.")
+		"carta_high_orc":
+			return _def("High Orc", "Tanque de élite. HP y resistencia a proyectiles.", "Orc Village (5:00+) — drop 0.05%.")
+		"carta_orc_hero":
+			return _def("Orc Hero", "Carta MVP legendaria. Poder absoluto y dominio del terreno.", "Jefe Orc Hero — máx. 1 por run.")
 		_:
 			return _def(card_id, "Carta misteriosa.", "")
 

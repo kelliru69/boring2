@@ -27,6 +27,8 @@ var _player: Node2D = null
 
 
 func _ready() -> void:
+	z_index = 64
+	z_as_relative = false
 	add_to_group(GROUP_LOOT)
 	body_entered.connect(_on_body_entered)
 	collision_layer = 8
@@ -61,8 +63,9 @@ static func spawn_pickup(
 	var pickup: Loot = scene.instantiate() as Loot
 	if pickup == null:
 		return null
-	parent.add_child(pickup)
-	pickup.global_position = _resolve_spawn_position(world_pos, parent)
+	# Evita "flushing queries" cuando se instancia desde callbacks de física/colisión.
+	parent.call_deferred("add_child", pickup)
+	pickup.set_deferred("global_position", _resolve_spawn_position(world_pos, parent))
 	pickup.configure(type, value)
 	pickup._pickup_grace_left = pickup.pickup_grace_time
 	_active_loot_count += 1
@@ -88,10 +91,15 @@ static func _grant_loot_direct(parent: Node, type: LootType, value: int) -> void
 
 static func _resolve_spawn_position(world_pos: Vector2, parent: Node) -> Vector2:
 	var pos: Vector2 = world_pos
-	var players: Array[Node] = parent.get_tree().get_nodes_in_group("Jugador")
+	var tree: SceneTree = parent.get_tree()
+	if tree == null:
+		return pos
+	var players: Array[Node] = tree.get_nodes_in_group("Jugador")
 	if players.is_empty() or not players[0] is Node2D:
 		return pos
 	var player: Node2D = players[0] as Node2D
+	if player == null or not is_instance_valid(player):
+		return pos
 	var min_dist: float = 36.0
 	if pos.distance_to(player.global_position) < min_dist:
 		var away: Vector2 = pos - player.global_position

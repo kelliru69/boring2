@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3 uid="uid://archer_skeleton_enemy_rosurvivor"]
+
+[ext_resource type="Script" path="res://scenes/enemy/ArcherAI.gd" id="1_archer_ai"]
+[ext_resource type="PackedScene" uid="uid://loot_pickup_rosurvivor" path="res://scenes/pickups/Loot.tscn" id="2_loot"]
+[ext_resource type="PackedScene" uid="uid://card_pickup_rosurvivor" path="res://scenes/pickups/CardPickup.tscn" id="3_card"]
+[ext_resource type="Script" path="res://scripts/visual/procedural_sprite.gd" id="4_proc_sprite"]
+[ext_resource type="Script" path="res://scripts/audio/hit_sound_player.gd" id="5_hit"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_enemy"]
+radius = 28.0
+
+[node name="ArcherSkeletonEnemy" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_archer_ai")
+enemy_type = "archer_skeleton"
+loot_scene = ExtResource("2_loot")
+card_drop_scene = ExtResource("3_card")
+dies_on_player_contact = false
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot"]
+script = ExtResource("4_proc_sprite")
+shape = 1
+fill_color = Color(0.85, 0.82, 0.75, 1)
+texture_size = 28
+display_scale = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_enemy")
+
+[node name="ContactDamageTimer" type="Timer" parent="."]
+wait_time = 0.8
+one_shot = true
+
+[node name="HitSoundPlayer" type="AudioStreamPlayer2D" parent="."]
+max_polyphony = 10
+script = ExtResource("5_hit")
+max_polyphony_count = 10
+pitch_random_range = 0.12
+volume_db_offset = -4.0
+sound_paths = PackedStringArray("res://audio/hit/hit_01.wav", "res://audio/hit/hit_02.wav", "res://audio/hit/hit_03.wav")
+

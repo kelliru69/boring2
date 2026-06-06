@@ -1,11 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://main_rosurvivor"]
+[gd_scene load_steps=16 format=3 uid="uid://main_rosurvivor"]
 
 [ext_resource type="Script" path="res://scenes/main/Main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://floating_combat_overlay" path="res://scenes/ui/FloatingCombatOverlay.tscn" id="1_overlay"]
+[ext_resource type="Script" path="res://scripts/vfx/camera_shake_controller.gd" id="1b_cam_shake"]
 [ext_resource type="Script" path="res://scenes/world/FieldSkyBackdrop.gd" id="2_sky"]
-[ext_resource type="PackedScene" uid="uid://osiris_boss_rosurvivor" path="res://scenes/boss/OsirisBoss.tscn" id="3_osiris"]
-[ext_resource type="PackedScene" uid="uid://player_rosurvivor" path="res://scenes/player/Player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://scenes/boss/MoonlightFlowerBoss.tscn" id="3b_moonlight"]
+[ext_resource type="PackedScene" path="res://scenes/boss/OrcHeroBoss.tscn" id="3c_orc_hero"]
+[ext_resource type="PackedScene" path="res://scenes/ui/JobChangeMenu.tscn" id="3d_job_change"]
+[ext_resource type="PackedScene" uid="uid://dqi7lskm4e8ro" path="res://scenes/player/Player.tscn" id="4_player"]
 [ext_resource type="PackedScene" uid="uid://enemy_rosurvivor" path="res://scenes/enemy/Enemy.tscn" id="5_enemy"]
-[ext_resource type="PackedScene" uid="uid://creamy_boss_rosurvivor" path="res://scenes/boss/CreamyBoss.tscn" id="5b_boss"]
+[ext_resource type="PackedScene" uid="uid://ckvu06vqya1ke" path="res://scenes/boss/CreamyBoss.tscn" id="5b_boss"]
 [ext_resource type="PackedScene" uid="uid://gamehud_rosurvivor" path="res://scenes/ui/GameHUD.tscn" id="6_hud"]
 [ext_resource type="PackedScene" uid="uid://levelup_ui_rosurvivor" path="res://scenes/ui/LevelUpUI.tscn" id="7_levelup"]
 [ext_resource type="PackedScene" uid="uid://run_result_ui" path="res://scenes/ui/RunResultUI.tscn" id="8_result"]
@@ -16,14 +20,22 @@
 script = ExtResource("1_main")
 enemy_scene = ExtResource("5_enemy")
 creamy_boss_scene = ExtResource("5b_boss")
-osiris_boss_scene = ExtResource("3_osiris")
+moonlight_flower_boss_scene = ExtResource("3b_moonlight")
+orc_hero_boss_scene = ExtResource("3c_orc_hero")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="FloatingCombatOverlay" parent="." instance=ExtResource("1_overlay")]
 
 [node name="FieldSky" type="CanvasLayer" parent="."]
 layer = -200
 script = ExtResource("2_sky")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position_smoothing_enabled = true
+zoom = Vector2(1, 1)
+position_smoothing_enabled = false
+process_callback = 1
+script = ExtResource("1b_cam_shake")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 
@@ -40,3 +52,5 @@ autostart = true
 [node name="PauseMenu" parent="." instance=ExtResource("9_pause")]
 
 [node name="DebugRunPanel" parent="." instance=ExtResource("10_debug")]
+
+[node name="JobChangeMenu" parent="." instance=ExtResource("3d_job_change")]

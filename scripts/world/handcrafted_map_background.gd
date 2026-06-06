@@ -47,6 +47,18 @@ func get_playable_center() -> Vector2:
 	return Arena.get_center() if Arena.is_ready() else Vector2.ZERO
 
 
+## Capa de referencia para snap del selector de celda (suelo).
+func get_snapping_tile_layer() -> TileMapLayer:
+	if ground_layer != null:
+		return ground_layer
+	return get_node_or_null("GroundLayer") as TileMapLayer
+
+
+## Tamaño de un tile en píxeles de mundo (tile_px × escala del mapa).
+func get_snapping_tile_size_px() -> int:
+	return _get_effective_tile_px()
+
+
 func _apply_layer_z_order() -> void:
 	if ground_layer:
 		ground_layer.z_index = -100

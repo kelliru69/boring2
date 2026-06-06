@@ -36,11 +36,29 @@ func refresh_state() -> void:
 		return
 	var level: int = Global.get_skill_level(skill_id)
 	var max_level: int = int(def.get("max_level", SkillTreeCatalog.MAX_SKILL_LEVEL))
+	var is_fusion: bool = bool(def.get("is_fusion", false))
+	var disabled_ingredient: bool = Global.is_skill_disabled_for_combat(skill_id)
 	_level_badge.text = "%d/%d" % [level, max_level]
 	var tree_unlocked: bool = level > 0 or Global.is_skill_unlocked(Global.base_class_id, skill_id)
-	if level > 0:
+	if level > 0 and is_fusion:
+		modulate = Color(1.0, 0.92, 0.55, 1.0)
+		tooltip_text = "%s\n%s\n(Fusión desbloqueada)" % [def.get("display_name", ""), def.get("description", "")]
+	elif level > 0 and disabled_ingredient:
+		modulate = Color(0.55, 0.58, 0.65, 0.9)
+		tooltip_text = "%s\n%s\n(Ingrediente Nv.%d — fusionado, inactivo en combate)" % [
+			def.get("display_name", ""),
+			def.get("description", ""),
+			level,
+		]
+	elif level > 0:
 		modulate = Color(1.0, 1.0, 1.0, 1.0)
 		tooltip_text = "%s\n%s\n(Nivel obtenido vía tómbola)" % [def.get("display_name", ""), def.get("description", "")]
+	elif is_fusion:
+		modulate = Color(0.45, 0.42, 0.35, 0.85)
+		tooltip_text = "%s\n%s\nSe desbloquea al fusionar ingredientes Nv.5 (Job Change)." % [
+			def.get("display_name", ""),
+			def.get("description", ""),
+		]
 	elif tree_unlocked:
 		modulate = Color(0.82, 0.9, 1.0, 1.0)
 		tooltip_text = "%s\n%s\nDisponible en la tómbola al subir de nivel." % [

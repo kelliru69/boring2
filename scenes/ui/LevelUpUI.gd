@@ -3,6 +3,7 @@ extends CanvasLayer
 
 const _UpgradePool = preload("res://data/upgrade_pool.gd")
 const _Theme = preload("res://scripts/ui/modern_ui_theme.gd")
+const _Fusion = preload("res://data/job_fusion_catalog.gd")
 
 signal upgrade_chosen(upgrade_id: String)
 
@@ -76,6 +77,11 @@ func _refresh_cards() -> void:
 					def.get("description", ""),
 					_level_hint_for(upgrade_id)
 				)
+			if card.has_method("set_skill_icon"):
+				var icon_skill_id: String = ""
+				if _UpgradePool.is_skill_choice(upgrade_id):
+					icon_skill_id = _UpgradePool.parse_skill_id(upgrade_id)
+				card.set_skill_icon(icon_skill_id)
 		else:
 			card.visible = false
 
@@ -147,8 +153,13 @@ func _on_card_chosen(upgrade_id: String) -> void:
 func _level_hint_for(upgrade_id: String) -> String:
 	if _eliminate_mode and Global.can_use_run_eliminate():
 		return "Banear del pool"
+	var fusion_hint: String = _fusion_hint_for_upgrade(upgrade_id)
+	if not fusion_hint.is_empty():
+		return fusion_hint
 	if _UpgradePool.is_stat_choice(upgrade_id):
 		return "Stat global"
+	if _UpgradePool.is_zeny_bag_choice(upgrade_id):
+		return "Zeny"
 	if _UpgradePool.is_skill_choice(upgrade_id):
 		var skill_id: String = _UpgradePool.parse_skill_id(upgrade_id)
 		if Global.get_skill_level(skill_id) > 0:
@@ -163,6 +174,24 @@ func _level_hint_for(upgrade_id: String) -> String:
 			return "Ataque básico"
 		return "Nueva habilidad"
 	return ""
+
+
+func _fusion_hint_for_upgrade(upgrade_id: String) -> String:
+	if not _Fusion.is_advanced_job(Global.current_class):
+		return ""
+	var upgrade_key: String = ""
+	if _UpgradePool.is_skill_choice(upgrade_id):
+		upgrade_key = _UpgradePool.parse_skill_id(upgrade_id)
+	elif _UpgradePool.is_stat_choice(upgrade_id):
+		upgrade_key = _UpgradePool.parse_stat_id(upgrade_id)
+	else:
+		return ""
+	var names: Array[String] = _Fusion.get_imminent_fusion_names(Global.current_class, upgrade_key)
+	if names.is_empty():
+		return ""
+	if names.size() == 1:
+		return "¡Fusión: %s!" % names[0]
+	return "¡Fusión: %s!" % ", ".join(names)
 
 
 func _find_player() -> Player:
